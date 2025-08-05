@@ -2424,4 +2424,618 @@ const BiomedicalLabPlatform = () => {
                     </div>
                     <div>
                       <p className="font-semibold">Gram's Iodine Solution</p>
-                      <p className="text
+                      <p className="text-sm text-gray-600">Mordant - fixes primary stain</p>
+                    </div>
+                  </div>
+
+                  {timer.active && (
+                    <div className="bg-amber-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-amber-600 mb-2">
+                          {timer.target - timer.seconds}s
+                        </div>
+                        <div className="w-full bg-amber-200 rounded-full h-2">
+                          <div
+                            className="bg-amber-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${(timer.seconds / timer.target) * 100}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-amber-700 text-sm mt-2">Fixing stain...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => applyStain('iodine')}
+                    disabled={!stainingProgress.crystalViolet || stainingProgress.iodine || timer.active}
+                    className="w-full mt-4 bg-amber-500 text-white px-6 py-2 rounded hover:bg-amber-600 disabled:bg-gray-400 transition-colors"
+                  >
+                    {stainingProgress.iodine ? '✅ Iodine Applied' : 'Apply Iodine'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
+                  <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
+                    <svg className="absolute inset-4 w-56 h-56">
+                      {renderBacterialCells()}
+                    </svg>
+                    <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+                      400x
+                    </div>
+                  </div>
+                  
+                  {stainingProgress.iodine && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold">Bacteria remain purple - crystal violet fixed</p>
+                      <button
+                        onClick={() => setStep(4)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to Decolorization
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 4: // Apply Decolorizer
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Apply Decolorizer</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-red-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-red-800 mb-2">⚠️ Critical Step</h4>
+                    <p className="text-red-700 text-sm">
+                      Add decolorizer until blue dye no longer flows from the smear. 
+                      Over-decolorization can cause false negatives!
+                    </p>
+                  </div>
+
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-16 bg-red-300 rounded border-2 border-red-500 flex items-end justify-center">
+                      <div className="w-2 h-2 bg-red-600 rounded-full mb-1"></div>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Gram's Decolorizer</p>
+                      <p className="text-sm text-gray-600">Removes stain from Gram-negative bacteria</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-blue-800 mb-2">🔬 What Happens:</h4>
+                    <ul className="text-blue-700 text-sm space-y-1">
+                      <li>• Gram-positive: Thick peptidoglycan retains stain</li>
+                      <li>• Gram-negative: Thin peptidoglycan loses stain</li>
+                    </ul>
+                  </div>
+
+                  <button
+                    onClick={() => applyStain('decolorizer')}
+                    disabled={!stainingProgress.iodine || stainingProgress.decolorizer}
+                    className="w-full bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 disabled:bg-gray-400 transition-colors"
+                  >
+                    {stainingProgress.decolorizer ? '✅ Decolorizer Applied' : 'Apply Decolorizer'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
+                  <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
+                    <svg className="absolute inset-4 w-56 h-56">
+                      {renderBacterialCells()}
+                    </svg>
+                    <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+                      400x
+                    </div>
+                  </div>
+                  
+                  {stainingProgress.decolorizer && (
+                    <div className="mt-4 text-center">
+                      <p className="text-blue-600 font-semibold">
+                        {bacteriaTypes[selectedBacteria].type === 'Gram-positive' 
+                          ? 'Bacteria remain purple' 
+                          : 'Bacteria appear colorless'
+                        }
+                      </p>
+                      <button
+                        onClick={() => setStep(5)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to Counterstain
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 5: // Apply Safranin
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Apply Safranin (Counterstain)</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-pink-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-pink-800 mb-2">🔬 Counterstain Function</h4>
+                    <p className="text-pink-700 text-sm">
+                      Safranin provides color to decolorized Gram-negative bacteria, 
+                      making them visible as pink/red under the microscope.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-16 bg-pink-400 rounded border-2 border-pink-600 flex items-end justify-center">
+                      <div className="w-2 h-2 bg-pink-700 rounded-full mb-1"></div>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Safranin Solution</p>
+                      <p className="text-sm text-gray-600">Counterstain - colors decolorized bacteria pink</p>
+                    </div>
+                  </div>
+
+                  {timer.active && (
+                    <div className="bg-pink-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-pink-600 mb-2">
+                          {timer.target - timer.seconds}s
+                        </div>
+                        <div className="w-full bg-pink-200 rounded-full h-2">
+                          <div
+                            className="bg-pink-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${(timer.seconds / timer.target) * 100}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-pink-700 text-sm mt-2">Counterstaining...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => applyStain('safranin')}
+                    disabled={!stainingProgress.decolorizer || stainingProgress.safranin || timer.active}
+                    className="w-full mt-4 bg-pink-500 text-white px-6 py-2 rounded hover:bg-pink-600 disabled:bg-gray-400 transition-colors"
+                  >
+                    {stainingProgress.safranin ? '✅ Safranin Applied' : 'Apply Safranin'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
+                  <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
+                    <svg className="absolute inset-4 w-56 h-56">
+                      {renderBacterialCells()}
+                    </svg>
+                    <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+                      400x
+                    </div>
+                  </div>
+                  
+                  {stainingProgress.safranin && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold">
+                        Final result: {bacteriaTypes[selectedBacteria].finalColor} bacteria
+                      </p>
+                      <button
+                        onClick={() => setStep(6)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Examine Results
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 6: // Microscopic Examination
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Microscopic Examination & Results</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">Final Microscopic View:</h4>
+                  <div className="w-80 h-80 bg-black rounded-full mx-auto relative border-4 border-gray-600">
+                    <svg className="absolute inset-4 w-72 h-72">
+                      {renderBacterialCells()}
+                    </svg>
+                    <div className="absolute bottom-4 right-4 text-white text-xs bg-black/50 px-2 py-1 rounded">
+                      1000x Oil Immersion
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4">Results Analysis:</h4>
+                  <div className="space-y-4">
+                    <div className={`p-4 rounded-lg ${
+                      bacteriaTypes[selectedBacteria].finalColor === 'purple' 
+                        ? 'bg-purple-50 border border-purple-200' 
+                        : 'bg-pink-50 border border-pink-200'
+                    }`}>
+                      <h5 className={`font-semibold mb-2 ${
+                        bacteriaTypes[selectedBacteria].finalColor === 'purple' 
+                          ? 'text-purple-800' 
+                          : 'text-pink-800'
+                      }`}>
+                        {bacteriaTypes[selectedBacteria].name} Classification:
+                      </h5>
+                      <ul className={`text-sm space-y-1 ${
+                        bacteriaTypes[selectedBacteria].finalColor === 'purple' 
+                          ? 'text-purple-700' 
+                          : 'text-pink-700'
+                      }`}>
+                        <li><strong>Result:</strong> {bacteriaTypes[selectedBacteria].type}</li>
+                        <li><strong>Color:</strong> {bacteriaTypes[selectedBacteria].finalColor}</li>
+                        <li><strong>Shape:</strong> {bacteriaTypes[selectedBacteria].shape}</li>
+                        <li><strong>Cell Wall:</strong> {
+                          bacteriaTypes[selectedBacteria].type === 'Gram-positive' 
+                            ? 'Thick peptidoglycan layer' 
+                            : 'Thin peptidoglycan layer'
+                        }</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h5 className="font-semibold text-blue-800 mb-2">Gram Staining Interpretation:</h5>
+                      <div className="text-sm text-blue-700 space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-purple-500 rounded"></div>
+                          <span>Purple/Violet = Gram-positive bacteria</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 bg-pink-500 rounded"></div>
+                          <span>Pink/Red = Gram-negative bacteria</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-50 p-4 rounded-lg">
+                      <h5 className="font-semibold text-yellow-800 mb-2">Clinical Significance:</h5>
+                      <p className="text-sm text-yellow-700">
+                        {bacteriaTypes[selectedBacteria].type === 'Gram-positive' 
+                          ? 'Gram-positive bacteria are generally more susceptible to penicillin and related antibiotics.'
+                          : 'Gram-negative bacteria have an outer membrane that can make them more resistant to certain antibiotics.'
+                        }
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 text-center">
+                    <div className="bg-green-50 p-4 rounded-lg mb-4">
+                      <p className="text-green-800 font-semibold">🎉 Gram Staining Complete!</p>
+                      <p className="text-green-700 text-sm">Grade: {mistakes.length === 0 ? 'A+' : mistakes.length <= 2 ? 'A' : 'B+'}</p>
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        setStudentProfile(prev => ({
+                          ...prev,
+                          experimentsCompleted: prev.experimentsCompleted + 1,
+                          totalScore: prev.totalScore + (mistakes.length === 0 ? 100 : Math.max(75, 100 - mistakes.length * 5)),
+                          badges: [...prev.badges, 'Bacterial Classification Expert']
+                        }));
+                        setCurrentExperiment('dashboard');
+                      }}
+                      className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors"
+                    >
+                      Complete Gram Staining Lab
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+
+        default:
+          return <div>Step not found</div>;
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-yellow-900 via-amber-900 to-orange-900 p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => setCurrentExperiment('dashboard')}
+              className="text-white hover:text-yellow-300 transition-colors"
+            >
+              ← Back to Dashboard
+            </button>
+            <h1 className="text-3xl font-bold text-white">Gram Staining Protocol</h1>
+            <div className="text-white">Step {step + 1} of {steps.length}</div>
+          </div>
+
+          <div className="mb-6">
+            <div className="w-full bg-gray-700 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-yellow-500 to-amber-500 h-3 rounded-full transition-all duration-300"
+                style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-amber-200 mt-2">{steps[step]}</p>
+          </div>
+
+          {mistakes.length > 0 && (
+            <div className="mb-6 bg-red-500/20 border border-red-500/50 rounded-lg p-4">
+              <h4 className="text-red-300 font-semibold mb-2">⚠️ Mistakes ({mistakes.length})</h4>
+              <ul className="text-red-200 text-sm space-y-1">
+                {mistakes.slice(-3).map((mistake, index) => (
+                  <li key={index}>• {mistake}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+            {renderStep()}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Cell Staining Component (Cytoskeleton & Nucleus)
+  const CellStaining = () => {
+    const [step, setStep] = useState(0);
+    const [cellPlate, setCellPlate] = useState({
+      wells: Array(8).fill().map((_, i) => ({
+        id: i + 1,
+        hasTriton: false,
+        hasBlocker: false,
+        hasPhalloidin: false,
+        hasDAPI: false,
+        permeabilized: false,
+        blocked: false,
+        actinStained: false,
+        nucleiStained: false
+      }))
+    });
+    const [incubationTimer, setIncubationTimer] = useState({ active: false, seconds: 0, target: 300 });
+    const [selectedWell, setSelectedWell] = useState(1);
+    const [microscopyFilter, setMicroscopyFilter] = useState('brightfield');
+    const [mistakes, setMistakes] = useState([]);
+
+    const steps = [
+      "Cell Permeabilization with Triton X-100",
+      "Wash Cells with PBS", 
+      "Block Non-specific Binding with BSA",
+      "Apply Phalloidin-Alexa Stain",
+      "DAPI Nuclear Staining",
+      "Fluorescence Microscopy Examination"
+    ];
+
+    const filters = {
+      brightfield: { name: 'Brightfield', color: '#f3f4f6', description: 'Normal light microscopy' },
+      blue: { name: 'Blue (FITC)', color: '#22c55e', description: 'Actin filaments (green)' },
+      violet: { name: 'Violet (DAPI)', color: '#3b82f6', description: 'Cell nuclei (blue)' },
+      merged: { name: 'Merged', color: '#8b5cf6', description: 'Combined fluorescence' }
+    };
+
+    useEffect(() => {
+      let interval;
+      if (incubationTimer.active && incubationTimer.seconds < incubationTimer.target) {
+        interval = setInterval(() => {
+          setIncubationTimer(prev => ({ ...prev, seconds: prev.seconds + 1 }));
+        }, 100); // Speed up for demo
+      } else if (incubationTimer.seconds >= incubationTimer.target) {
+        setIncubationTimer(prev => ({ ...prev, active: false }));
+      }
+      return () => clearInterval(interval);
+    }, [incubationTimer.active, incubationTimer.seconds, incubationTimer.target]);
+
+    const applyReagent = (reagentType, wellId = null) => {
+      const targetWells = wellId ? [wellId] : cellPlate.wells.map(w => w.id);
+      
+      setCellPlate(prev => ({
+        ...prev,
+        wells: prev.wells.map(well => {
+          if (!targetWells.includes(well.id)) return well;
+          
+          const newWell = { ...well };
+          
+          switch (reagentType) {
+            case 'triton':
+              if (!newWell.hasTriton) {
+                newWell.hasTriton = true;
+                setTimeout(() => {
+                  setCellPlate(p => ({
+                    ...p,
+                    wells: p.wells.map(w => 
+                      w.id === well.id ? { ...w, permeabilized: true } : w
+                    )
+                  }));
+                }, 3000); // 5 min in demo time
+              }
+              break;
+            case 'blocker':
+              if (newWell.permeabilized && !newWell.hasBlocker) {
+                newWell.hasBlocker = true;
+                setTimeout(() => {
+                  setCellPlate(p => ({
+                    ...p,
+                    wells: p.wells.map(w => 
+                      w.id === well.id ? { ...w, blocked: true } : w
+                    )
+                  }));
+                }, 6000); // 20 min in demo time
+              } else if (!newWell.permeabilized) {
+                setMistakes(prev => [...prev, `Well ${well.id}: Permeabilize cells first!`]);
+              }
+              break;
+            case 'phalloidin':
+              if (newWell.blocked && !newWell.hasPhalloidin) {
+                newWell.hasPhalloidin = true;
+                setTimeout(() => {
+                  setCellPlate(p => ({
+                    ...p,
+                    wells: p.wells.map(w => 
+                      w.id === well.id ? { ...w, actinStained: true } : w
+                    )
+                  }));
+                }, 6000); // 20 min in demo time
+              } else if (!newWell.blocked) {
+                setMistakes(prev => [...prev, `Well ${well.id}: Block cells first!`]);
+              }
+              break;
+            case 'dapi':
+              if (newWell.actinStained && !newWell.hasDAPI) {
+                newWell.hasDAPI = true;
+                setTimeout(() => {
+                  setCellPlate(p => ({
+                    ...p,
+                    wells: p.wells.map(w => 
+                      w.id === well.id ? { ...w, nucleiStained: true } : w
+                    )
+                  }));
+                }, 900); // 3 min in demo time
+              } else if (!newWell.actinStained) {
+                setMistakes(prev => [...prev, `Well ${well.id}: Stain actin filaments first!`]);
+              }
+              break;
+          }
+          
+          return newWell;
+        })
+      }));
+    };
+
+    const renderCellsInWell = (well) => {
+      const cells = [];
+      for (let i = 0; i < 12; i++) {
+        const x = 20 + (Math.random() * 60);
+        const y = 20 + (Math.random() * 60);
+        
+        // Cell body
+        let cellColor = '#e5e7eb';
+        let nucleusColor = '#9ca3af';
+        let actinVisible = false;
+        
+        if (microscopyFilter === 'blue' && well.actinStained) {
+          cellColor = 'rgba(34, 197, 94, 0.1)';
+          actinVisible = true;
+        } else if (microscopyFilter === 'violet' && well.nucleiStained) {
+          cellColor = 'rgba(59, 130, 246, 0.1)';
+          nucleusColor = '#3b82f6';
+        } else if (microscopyFilter === 'merged' && well.actinStained && well.nucleiStained) {
+          cellColor = 'rgba(34, 197, 94, 0.1)';
+          nucleusColor = '#3b82f6';
+          actinVisible = true;
+        }
+        
+        cells.push(
+          <g key={i}>
+            {/* Cell body */}
+            <circle
+              cx={x}
+              cy={y}
+              r="8"
+              fill={cellColor}
+              stroke="#6b7280"
+              strokeWidth="0.5"
+            />
+            
+            {/* Actin filaments */}
+            {actinVisible && (
+              <g>
+                <path
+                  d={`M ${x-6} ${y} Q ${x} ${y-3} ${x+6} ${y}`}
+                  stroke="#22c55e" 
+                  strokeWidth="1" 
+                  fill="none"
+                  opacity="0.8"
+                />
+                <path
+                  d={`M ${x} ${y-6} Q ${x+3} ${y} ${x} ${y+6}`}
+                  stroke="#22c55e" 
+                  strokeWidth="1" 
+                  fill="none"
+                  opacity="0.8"
+                />
+              </g>
+            )}
+            
+            {/* Nucleus */}
+            <circle
+              cx={x}
+              cy={y}
+              r="3"
+              fill={nucleusColor}
+              opacity={well.nucleiStained && (microscopyFilter === 'violet' || microscopyFilter === 'merged') ? 1 : 0.5}
+            />
+          </g>
+        );
+      }
+      return cells;
+    };
+
+    const renderStep = () => {
+      switch (step) {
+        case 0: // Cell Permeabilization
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Cell Permeabilization with Triton X-100</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-blue-800 mb-2">🧪 Permeabilization Purpose</h4>
+                    <p className="text-blue-700 text-sm">
+                      Triton X-100 creates pores in the cell membrane, allowing staining reagents 
+                      to penetrate and bind to intracellular structures like the cytoskeleton.
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-3">Protocol:</h4>
+                    <ol className="list-decimal list-inside text-sm space-y-2">
+                      <li>Add 0.01% Triton X-100 solution to each well</li>
+                      <li>Incubate on gentle shaker for 5 minutes</li>
+                      <li>Cells become permeable to reagents</li>
+                    </ol>
+                  </div>
+
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-12 bg-blue-300 rounded border flex items-center justify-center">
+                      <Droplets className="w-4 h-4 text-blue-700" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">0.01% Triton X-100</p>
+                      <p className="text-sm text-gray-600">Non-ionic detergent</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      applyReagent('triton');
+                      setIncubationTimer({ active: true, seconds: 0, target: 300 });
+                    }}
+                    disabled={cellPlate.wells.every(w => w.hasTriton)}
+                    className="w-full bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:bg-green-500 transition-colors"
+                  >
+                    {cellPlate.wells.every(w => w.hasTriton) ? '✅ Triton X-100 Applied' : 'Add Triton X-100 to All Wells'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">96-Well Cell Culture Plate:</h4>
+                  <div className="grid grid-cols-4 gap-2 bg-gray-100 p-4 rounded-lg max-w-sm mx-auto">
+                    {cellPlate.wells.map(well => (
+                      <div
+                        key={well.id}
+                        className={`w-16 h-16 rounded border-2 cursor-pointer transition-colors ${
+                          well.hasTriton ? 'border-blue-500 bg-blue-100' : 'border-gray-400 bg-white'
+                        } ${selectedWell === well.id ? 'ring-2 ring-purple-500' : ''}`}
+                        onClick={() => setSelectedWell(well.id)}
+                      >
+                        <svg className="w-full h-full p-1">
+                          {renderCellsInWell(well)}
+                        </svg>
