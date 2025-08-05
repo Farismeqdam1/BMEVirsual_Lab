@@ -3039,3 +3039,579 @@ const BiomedicalLabPlatform = () => {
                         <svg className="w-full h-full p-1">
                           {renderCellsInWell(well)}
                         </svg>
+                        <div className="text-xs text-center mt-1">Well {well.id}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {incubationTimer.active && (
+                    <div className="mt-4 bg-blue-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-blue-600 mb-2">
+                          {Math.floor((incubationTimer.target - incubationTimer.seconds) / 60)}:
+                          {(incubationTimer.target - incubationTimer.seconds % 60).toString().padStart(2, '0')}
+                        </div>
+                        <div className="w-full bg-blue-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${(incubationTimer.seconds / incubationTimer.target) * 100}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-blue-700 text-sm mt-2">Permeabilization in progress...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {cellPlate.wells.every(w => w.permeabilized) && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold">✅ Cells successfully permeabilized!</p>
+                      <button
+                        onClick={() => setStep(1)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to PBS Wash
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 1: // Wash Cells with PBS
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Wash Cells with PBS</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-blue-800 mb-2">🧪 Washing Purpose</h4>
+                    <p className="text-blue-700 text-sm">
+                      Phosphate Buffered Saline (PBS) removes residual Triton X-100 and prepares cells 
+                      for the blocking step. Washing prevents reagent interactions and background staining.
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-3">Protocol:</h4>
+                    <ol className="list-decimal list-inside text-sm space-y-2">
+                      <li>Gently aspirate Triton X-100 from wells</li>
+                      <li>Add 200μL PBS to each well</li>
+                      <li>Rock plate gently for 30 seconds</li>
+                      <li>Aspirate PBS and repeat wash</li>
+                    </ol>
+                  </div>
+
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-12 bg-blue-100 rounded border flex items-center justify-center">
+                      <Droplets className="w-4 h-4 text-blue-500" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Phosphate Buffered Saline (PBS)</p>
+                      <p className="text-sm text-gray-600">pH 7.4, isotonic</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">96-Well Plate Status:</h4>
+                  <div className="grid grid-cols-4 gap-2 bg-gray-100 p-4 rounded-lg max-w-sm mx-auto">
+                    {cellPlate.wells.map(well => (
+                      <div
+                        key={well.id}
+                        className={`w-16 h-16 rounded border-2 cursor-pointer transition-colors ${
+                          well.permeabilized ? 'border-green-500 bg-green-100' : 'border-gray-400 bg-white'
+                        } ${selectedWell === well.id ? 'ring-2 ring-purple-500' : ''}`}
+                        onClick={() => setSelectedWell(well.id)}
+                      >
+                        <svg className="w-full h-full p-1">
+                          {renderCellsInWell(well)}
+                        </svg>
+                        <div className="text-xs text-center mt-1">Well {well.id}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 text-center">
+                    <button
+                      onClick={() => {
+                        setCellPlate(prev => ({
+                          ...prev,
+                          wells: prev.wells.map(well => ({ ...well, washed: true }))
+                        }));
+                      }}
+                      disabled={cellPlate.wells.every(w => w.washed)}
+                      className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
+                    >
+                      {cellPlate.wells.every(w => w.washed) ? '✅ PBS Wash Complete' : 'Complete PBS Wash'}
+                    </button>
+                  </div>
+
+                  {cellPlate.wells.every(w => w.washed) && (
+                    <button
+                      onClick={() => setStep(2)}
+                      className="mt-4 w-full bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                    >
+                      Continue to Blocking Step
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 2: // Block Non-specific Binding
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Block Non-specific Binding with BSA</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-yellow-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-yellow-800 mb-2">🧪 Blocking Purpose</h4>
+                    <p className="text-yellow-700 text-sm">
+                      Bovine Serum Albumin (BSA) binds to non-specific sites, preventing antibodies 
+                      and other reagents from sticking to areas where they don't belong, reducing background staining.
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-3">Protocol:</h4>
+                    <ol className="list-decimal list-inside text-sm space-y-2">
+                      <li>Add 1% BSA solution to each well</li>
+                      <li>Incubate on gentle shaker for 20 minutes</li>
+                      <li>Prevents non-specific antibody binding</li>
+                    </ol>
+                  </div>
+
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-12 bg-yellow-200 rounded border flex items-center justify-center">
+                      <Droplets className="w-4 h-4 text-yellow-700" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">1% BSA Solution</p>
+                      <p className="text-sm text-gray-600">In PBS</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      applyReagent('blocker');
+                      setIncubationTimer({ active: true, seconds: 0, target: 1200 });
+                    }}
+                    disabled={cellPlate.wells.every(w => w.hasBlocker)}
+                    className="w-full bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600 disabled:bg-green-500 transition-colors"
+                  >
+                    {cellPlate.wells.every(w => w.hasBlocker) ? '✅ BSA Applied' : 'Add BSA to All Wells'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">96-Well Plate Status:</h4>
+                  <div className="grid grid-cols-4 gap-2 bg-gray-100 p-4 rounded-lg max-w-sm mx-auto">
+                    {cellPlate.wells.map(well => (
+                      <div
+                        key={well.id}
+                        className={`w-16 h-16 rounded border-2 cursor-pointer transition-colors ${
+                          well.hasBlocker ? 'border-yellow-500 bg-yellow-100' : 
+                          well.permeabilized ? 'border-green-500 bg-green-100' : 'border-gray-400 bg-white'
+                        } ${selectedWell === well.id ? 'ring-2 ring-purple-500' : ''}`}
+                        onClick={() => setSelectedWell(well.id)}
+                      >
+                        <svg className="w-full h-full p-1">
+                          {renderCellsInWell(well)}
+                        </svg>
+                        <div className="text-xs text-center mt-1">Well {well.id}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {incubationTimer.active && (
+                    <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-yellow-600 mb-2">
+                          {Math.floor((incubationTimer.target - incubationTimer.seconds) / 60)}:
+                          {(incubationTimer.target - incubationTimer.seconds % 60).toString().padStart(2, '0')}
+                        </div>
+                        <div className="w-full bg-yellow-200 rounded-full h-2">
+                          <div
+                            className="bg-yellow-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${(incubationTimer.seconds / incubationTimer.target) * 100}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-yellow-700 text-sm mt-2">Blocking in progress...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {cellPlate.wells.every(w => w.blocked) && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold">✅ Non-specific binding sites blocked!</p>
+                      <button
+                        onClick={() => setStep(3)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to Actin Staining
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 3: // Apply Phalloidin-Alexa Stain
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Apply Phalloidin-Alexa Stain (Actin Filaments)</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-green-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-green-800 mb-2">🧪 Actin Staining</h4>
+                    <p className="text-green-700 text-sm">
+                      Phalloidin binds specifically to F-actin in the cytoskeleton. The Alexa Fluor 
+                      conjugate provides green fluorescence under blue excitation (495nm).
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-3">Protocol:</h4>
+                    <ol className="list-decimal list-inside text-sm space-y-2">
+                      <li>Prepare Alexa Fluor-conjugated phalloidin solution</li>
+                      <li>Add enough to cover cells in each well</li>
+                      <li>Incubate for 20 minutes protected from light</li>
+                      <li>Wash twice with PBS before proceeding</li>
+                    </ol>
+                  </div>
+
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-12 bg-green-300 rounded border flex items-center justify-center">
+                      <Droplets className="w-4 h-4 text-green-700" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Phalloidin-Alexa 488</p>
+                      <p className="text-sm text-gray-600">Green fluorescence (F-actin)</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      applyReagent('phalloidin');
+                      setIncubationTimer({ active: true, seconds: 0, target: 1200 });
+                    }}
+                    disabled={cellPlate.wells.every(w => w.hasPhalloidin)}
+                    className="w-full bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 disabled:bg-green-500 transition-colors"
+                  >
+                    {cellPlate.wells.every(w => w.hasPhalloidin) ? '✅ Phalloidin Applied' : 'Add Phalloidin to All Wells'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">96-Well Plate Status:</h4>
+                  <div className="grid grid-cols-4 gap-2 bg-gray-100 p-4 rounded-lg max-w-sm mx-auto">
+                    {cellPlate.wells.map(well => (
+                      <div
+                        key={well.id}
+                        className={`w-16 h-16 rounded border-2 cursor-pointer transition-colors ${
+                          well.hasPhalloidin ? 'border-green-500 bg-green-100' : 
+                          well.blocked ? 'border-yellow-500 bg-yellow-100' : 'border-gray-400 bg-white'
+                        } ${selectedWell === well.id ? 'ring-2 ring-purple-500' : ''}`}
+                        onClick={() => setSelectedWell(well.id)}
+                      >
+                        <svg className="w-full h-full p-1">
+                          {renderCellsInWell(well)}
+                        </svg>
+                        <div className="text-xs text-center mt-1">Well {well.id}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {incubationTimer.active && (
+                    <div className="mt-4 bg-green-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-green-600 mb-2">
+                          {Math.floor((incubationTimer.target - incubationTimer.seconds) / 60)}:
+                          {(incubationTimer.target - incubationTimer.seconds % 60).toString().padStart(2, '0')}
+                        </div>
+                        <div className="w-full bg-green-200 rounded-full h-2">
+                          <div
+                            className="bg-green-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${(incubationTimer.seconds / incubationTimer.target) * 100}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-green-700 text-sm mt-2">Actin staining in progress...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {cellPlate.wells.every(w => w.actinStained) && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold">✅ Actin filaments successfully stained!</p>
+                      <button
+                        onClick={() => setStep(4)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to Nuclear Staining
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 4: // DAPI Nuclear Staining
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">DAPI Nuclear Staining</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-indigo-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-indigo-800 mb-2">🧪 Nuclear Staining</h4>
+                    <p className="text-indigo-700 text-sm">
+                      DAPI (4',6-diamidino-2-phenylindole) binds strongly to A-T rich regions in DNA, 
+                      producing blue fluorescence under UV excitation (358nm). It stains all nuclei.
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-3">Protocol:</h4>
+                    <ol className="list-decimal list-inside text-sm space-y-2">
+                      <li>Allow DAPI solution to reach room temperature</li>
+                      <li>Add to wells after actin staining</li>
+                      <li>Incubate for 3 minutes protected from light</li>
+                      <li>Wash twice with PBS before imaging</li>
+                    </ol>
+                  </div>
+
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-12 bg-indigo-300 rounded border flex items-center justify-center">
+                      <Droplets className="w-4 h-4 text-indigo-700" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">DAPI Solution</p>
+                      <p className="text-sm text-gray-600">Blue fluorescence (nuclei)</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      applyReagent('dapi');
+                      setIncubationTimer({ active: true, seconds: 0, target: 180 });
+                    }}
+                    disabled={cellPlate.wells.every(w => w.hasDAPI)}
+                    className="w-full bg-indigo-500 text-white px-6 py-2 rounded hover:bg-indigo-600 disabled:bg-green-500 transition-colors"
+                  >
+                    {cellPlate.wells.every(w => w.hasDAPI) ? '✅ DAPI Applied' : 'Add DAPI to All Wells'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">96-Well Plate Status:</h4>
+                  <div className="grid grid-cols-4 gap-2 bg-gray-100 p-4 rounded-lg max-w-sm mx-auto">
+                    {cellPlate.wells.map(well => (
+                      <div
+                        key={well.id}
+                        className={`w-16 h-16 rounded border-2 cursor-pointer transition-colors ${
+                          well.hasDAPI ? 'border-indigo-500 bg-indigo-100' : 
+                          well.actinStained ? 'border-green-500 bg-green-100' : 'border-gray-400 bg-white'
+                        } ${selectedWell === well.id ? 'ring-2 ring-purple-500' : ''}`}
+                        onClick={() => setSelectedWell(well.id)}
+                      >
+                        <svg className="w-full h-full p-1">
+                          {renderCellsInWell(well)}
+                        </svg>
+                        <div className="text-xs text-center mt-1">Well {well.id}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {incubationTimer.active && (
+                    <div className="mt-4 bg-indigo-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-indigo-600 mb-2">
+                          {Math.floor((incubationTimer.target - incubationTimer.seconds) / 60)}:
+                          {(incubationTimer.target - incubationTimer.seconds % 60).toString().padStart(2, '0')}
+                        </div>
+                        <div className="w-full bg-indigo-200 rounded-full h-2">
+                          <div
+                            className="bg-indigo-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${(incubationTimer.seconds / incubationTimer.target) * 100}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-indigo-700 text-sm mt-2">Nuclear staining in progress...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {cellPlate.wells.every(w => w.nucleiStained) && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold">✅ Nuclei successfully stained!</p>
+                      <button
+                        onClick={() => setStep(5)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Examine Under Microscope
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 5: // Fluorescence Microscopy Examination
+          const currentWell = cellPlate.wells.find(w => w.id === selectedWell);
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Fluorescence Microscopy Examination</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">Microscope Controls:</h4>
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {Object.entries(filters).map(([key, filter]) => (
+                      <button
+                        key={key}
+                        onClick={() => setMicroscopyFilter(key)}
+                        className={`p-4 border-2 rounded-lg transition-colors ${
+                          microscopyFilter === key 
+                            ? 'border-blue-500 bg-blue-50' 
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: filter.color }}></div>
+                          <div>
+                            <p className="font-semibold">{filter.name}</p>
+                            <p className="text-xs text-gray-600">{filter.description}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h5 className="font-semibold text-gray-800 mb-2">Well {selectedWell} Analysis:</h5>
+                    <div className="text-sm text-gray-700 space-y-2">
+                      <p><strong>Actin Staining:</strong> {currentWell.actinStained ? '✅ Present' : '❌ Absent'}</p>
+                      <p><strong>Nuclear Staining:</strong> {currentWell.nucleiStained ? '✅ Present' : '❌ Absent'}</p>
+                      <p><strong>Cell Morphology:</strong> Normal</p>
+                      <p><strong>Staining Quality:</strong> Excellent</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">Fluorescence Microscope:</h4>
+                  <div className="w-80 h-80 bg-black rounded-lg mx-auto relative border-4 border-gray-600">
+                    <svg className="absolute inset-4 w-72 h-72">
+                      {renderCellsInWell(currentWell)}
+                    </svg>
+                    <div className="absolute bottom-4 right-4 text-white text-xs bg-black/50 px-2 py-1 rounded">
+                      {filters[microscopyFilter].name} Filter
+                    </div>
+                  </div>
+                  <p className="text-center text-sm text-gray-600 mt-2">
+                    Well {selectedWell} - {filters[microscopyFilter].description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <h4 className="font-semibold mb-3">Experiment Summary:</h4>
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="space-y-2 text-sm text-green-700">
+                    <p><strong>Technique:</strong> Fluorescence microscopy of cytoskeleton and nuclei</p>
+                    <p><strong>Stains Used:</strong> Phalloidin-Alexa 488 (actin), DAPI (nuclei)</p>
+                    <p><strong>Results:</strong> Successful visualization of both actin filaments and nuclei</p>
+                    <p><strong>Mistakes:</strong> {mistakes.length}</p>
+                    <p><strong>Grade:</strong> {mistakes.length === 0 ? 'A+' : mistakes.length <= 2 ? 'A' : 'B+'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => {
+                    setStudentProfile(prev => ({
+                      ...prev,
+                      experimentsCompleted: prev.experimentsCompleted + 1,
+                      totalScore: prev.totalScore + (mistakes.length === 0 ? 100 : Math.max(80, 100 - mistakes.length * 4)),
+                      badges: [...prev.badges, 'Fluorescence Microscopy Expert']
+                    }));
+                    setCurrentExperiment('dashboard');
+                  }}
+                  className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  Complete Cell Staining Lab
+                </button>
+              </div>
+            </div>
+          );
+
+        default:
+          return <div>Step not found</div>;
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => setCurrentExperiment('dashboard')}
+              className="text-white hover:text-purple-300 transition-colors"
+            >
+              ← Back to Dashboard
+            </button>
+            <h1 className="text-3xl font-bold text-white">Cytoskeleton & Nucleus Staining</h1>
+            <div className="text-white">Step {step + 1} of {steps.length}</div>
+          </div>
+
+          <div className="mb-6">
+            <div className="w-full bg-gray-700 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-300"
+                style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-purple-200 mt-2">{steps[step]}</p>
+          </div>
+
+          {mistakes.length > 0 && (
+            <div className="mb-6 bg-red-500/20 border border-red-500/50 rounded-lg p-4">
+              <h4 className="text-red-300 font-semibold mb-2">⚠️ Mistakes ({mistakes.length})</h4>
+              <ul className="text-red-200 text-sm space-y-1">
+                {mistakes.slice(-3).map((mistake, index) => (
+                  <li key={index}>• {mistake}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+            {renderStep()}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Main render function
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {currentExperiment === 'dashboard' && <Dashboard />}
+      {currentExperiment === 'osmotic-solutions' && <OsmoticSolutions />}
+      {currentExperiment === 'bradford-assay' && <BradfordAssay />}
+      {currentExperiment === 'pcr-simulation' && <PCRSimulation />}
+      {currentExperiment === 'gram-staining' && <GramStaining />}
+      {currentExperiment === 'cell-staining' && <CellStaining />}
+    </div>
+  );
+};
+
+export default BiomedicalLabPlatform;
