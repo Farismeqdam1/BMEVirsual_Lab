@@ -1214,4 +1214,1214 @@ const BiomedicalLabPlatform = () => {
                     <div className="space-y-1 text-sm">
                       <p><strong>Experiment:</strong> Bradford Protein Assay</p>
                       <p><strong>Date:</strong> {new Date().toLocaleDateString()}</p>
-                      <p><strong>Standar
+                      <p><strong>Standard Curve R²:</strong> {standardCurve?.rSquared.toFixed(4)}</p>
+                      <p><strong>Unknown Concentration:</strong> {unknownConcentration} μg/mL</p>
+                      <p><strong>Mistakes:</strong> {mistakes.length}</p>
+                      <p><strong>Grade:</strong> {mistakes.length === 0 ? 'A+' : mistakes.length <= 2 ? 'A' : 'B+'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-3">Conclusion</h4>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="text-sm text-gray-700">
+                      The Bradford assay successfully quantified protein concentration using BSA standards. 
+                      The assay's principle relies on the binding of Coomassie Brilliant Blue G-250 to basic amino acids 
+                      (arginine, lysine, histidine), causing a spectral shift from 465nm to 595nm.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {unknownConcentration && (
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => {
+                      setStudentProfile(prev => ({
+                        ...prev,
+                        experimentsCompleted: prev.experimentsCompleted + 1,
+                        totalScore: prev.totalScore + (mistakes.length === 0 ? 100 : Math.max(70, 100 - mistakes.length * 3)),
+                        badges: [...prev.badges, 'Protein Quantification Expert']
+                      }));
+                      setCurrentExperiment('dashboard');
+                    }}
+                    className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors"
+                  >
+                    Complete Bradford Assay Lab
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+
+        default:
+          return <div>Step not found</div>;
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => setCurrentExperiment('dashboard')}
+              className="text-white hover:text-purple-300 transition-colors"
+            >
+              ← Back to Dashboard
+            </button>
+            <h1 className="text-3xl font-bold text-white">Bradford Protein Assay</h1>
+            <div className="text-white">Step {step + 1} of {steps.length}</div>
+          </div>
+
+          <div className="mb-6">
+            <div className="w-full bg-gray-700 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-purple-500 to-indigo-500 h-3 rounded-full transition-all duration-300"
+                style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-purple-200 mt-2">{steps[step]}</p>
+          </div>
+
+          {mistakes.length > 0 && (
+            <div className="mb-6 bg-red-500/20 border border-red-500/50 rounded-lg p-4">
+              <h4 className="text-red-300 font-semibold mb-2">⚠️ Mistakes ({mistakes.length})</h4>
+              <ul className="text-red-200 text-sm space-y-1">
+                {mistakes.slice(-3).map((mistake, index) => (
+                  <li key={index}>• {mistake}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+            {renderStep()}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // PCR Simulation Component
+  const PCRSimulation = () => {
+    const [step, setStep] = useState(0);
+    const [primerDesign, setPrimerDesign] = useState({
+      forward: '',
+      reverse: '',
+      targetSequence: 'ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGAT',
+      validated: false
+    });
+    const [pcrReaction, setPcrReaction] = useState({
+      template: 2,
+      forward: 0.7,
+      reverse: 0.7,
+      taq: 15,
+      water: 11.6,
+      ready: false
+    });
+    const [thermalCycling, setThermalCycling] = useState({
+      currentCycle: 0,
+      totalCycles: 35,
+      currentStep: 'denaturation',
+      temperature: 95,
+      timeRemaining: 300,
+      isRunning: false,
+      completed: false
+    });
+    const [gelElectrophoresis, setGelElectrophoresis] = useState({
+      gelCast: false,
+      samplesLoaded: false,
+      running: false,
+      voltage: 150,
+      timeElapsed: 0,
+      results: null
+    });
+    const [mistakes, setMistakes] = useState([]);
+
+    const steps = [
+      "Design PCR Primers",
+      "Prepare PCR Master Mix", 
+      "Set Up Thermal Cycling Parameters",
+      "Run PCR Thermal Cycling",
+      "Prepare Agarose Gel",
+      "Load Samples and Run Electrophoresis",
+      "Analyze Results"
+    ];
+
+    const thermalCycleSteps = [
+      { name: 'denaturation', temp: 95, time: 30, color: 'bg-red-500' },
+      { name: 'annealing', temp: 55, time: 30, color: 'bg-blue-500' },
+      { name: 'extension', temp: 72, time: 30, color: 'bg-green-500' }
+    ];
+
+    useEffect(() => {
+      let interval;
+      if (thermalCycling.isRunning && !thermalCycling.completed) {
+        interval = setInterval(() => {
+          setThermalCycling(prev => {
+            if (prev.timeRemaining > 0) {
+              return { ...prev, timeRemaining: prev.timeRemaining - 1 };
+            } else {
+              // Move to next step or cycle
+              const currentStepIndex = thermalCycleSteps.findIndex(s => s.name === prev.currentStep);
+              if (currentStepIndex < thermalCycleSteps.length - 1) {
+                const nextStep = thermalCycleSteps[currentStepIndex + 1];
+                return {
+                  ...prev,
+                  currentStep: nextStep.name,
+                  temperature: nextStep.temp,
+                  timeRemaining: nextStep.time
+                };
+              } else if (prev.currentCycle < prev.totalCycles - 1) {
+                // Next cycle
+                return {
+                  ...prev,
+                  currentCycle: prev.currentCycle + 1,
+                  currentStep: 'denaturation',
+                  temperature: 95,
+                  timeRemaining: 30
+                };
+              } else {
+                // PCR completed
+                return { ...prev, completed: true, isRunning: false };
+              }
+            }
+          });
+        }, 100); // Speed up for demo
+      }
+      return () => clearInterval(interval);
+    }, [thermalCycling.isRunning, thermalCycling.completed]);
+
+    useEffect(() => {
+      let interval;
+      if (gelElectrophoresis.running) {
+        interval = setInterval(() => {
+          setGelElectrophoresis(prev => {
+            if (prev.timeElapsed < 1800) { // 30 minutes
+              return { ...prev, timeElapsed: prev.timeElapsed + 1 };
+            } else {
+              return { 
+                ...prev, 
+                running: false,
+                results: {
+                  ladder: { position: 10, bands: [1000, 750, 500, 250, 100] },
+                  sample: { position: 20, bands: [500] },
+                  control: { position: 30, bands: [] }
+                }
+              };
+            }
+          });
+        }, 50);
+      }
+      return () => clearInterval(interval);
+    }, [gelElectrophoresis.running]);
+
+    const validatePrimers = () => {
+      const { forward, reverse, targetSequence } = primerDesign;
+      
+      if (forward.length < 18 || forward.length > 25) {
+        setMistakes(prev => [...prev, "Forward primer length should be 18-25 nucleotides"]);
+        return;
+      }
+      if (reverse.length < 18 || reverse.length > 25) {
+        setMistakes(prev => [...prev, "Reverse primer length should be 18-25 nucleotides"]);
+        return;
+      }
+      
+      // Check GC content (simplified)
+      const gcContent = (seq) => {
+        const gc = (seq.match(/[GC]/g) || []).length;
+        return (gc / seq.length) * 100;
+      };
+      
+      if (gcContent(forward) < 40 || gcContent(forward) > 60) {
+        setMistakes(prev => [...prev, "Forward primer GC content should be 40-60%"]);
+        return;
+      }
+      
+      setPrimerDesign(prev => ({ ...prev, validated: true }));
+    };
+
+    const prepareMasterMix = (component, volume) => {
+      setPcrReaction(prev => {
+        const newReaction = { ...prev, [component]: volume };
+        const total = Object.values(newReaction).reduce((sum, val) => sum + val, 0);
+        return { ...newReaction, ready: total === 30 };
+      });
+    };
+
+    const renderStep = () => {
+      switch (step) {
+        case 0: // Design PCR Primers
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Design PCR Primers</h3>
+              
+              <div className="mb-6">
+                <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                  <h4 className="font-semibold text-blue-800 mb-2">🧬 Target DNA Sequence</h4>
+                  <div className="font-mono text-sm bg-white p-3 rounded border">
+                    5'-{primerDesign.targetSequence}-3'
+                  </div>
+                  <p className="text-blue-700 text-sm mt-2">
+                    Design primers that are 18-25 nucleotides long with 40-60% GC content
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block font-semibold mb-2">Forward Primer (5'→3'):</label>
+                    <input
+                      type="text"
+                      value={primerDesign.forward}
+                      onChange={(e) => setPrimerDesign(prev => ({ ...prev, forward: e.target.value.toUpperCase() }))}
+                      className="w-full p-3 border rounded font-mono text-sm"
+                      placeholder="Enter forward primer sequence"
+                      pattern="[ATCG]*"
+                    />
+                    <p className="text-sm text-gray-600 mt-1">
+                      Length: {primerDesign.forward.length} | 
+                      GC: {primerDesign.forward ? Math.round(((primerDesign.forward.match(/[GC]/g) || []).length / primerDesign.forward.length) * 100) : 0}%
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold mb-2">Reverse Primer (5'→3'):</label>
+                    <input
+                      type="text"
+                      value={primerDesign.reverse}
+                      onChange={(e) => setPrimerDesign(prev => ({ ...prev, reverse: e.target.value.toUpperCase() }))}
+                      className="w-full p-3 border rounded font-mono text-sm"
+                      placeholder="Enter reverse primer sequence"
+                      pattern="[ATCG]*"
+                    />
+                    <p className="text-sm text-gray-600 mt-1">
+                      Length: {primerDesign.reverse.length} | 
+                      GC: {primerDesign.reverse ? Math.round(((primerDesign.reverse.match(/[GC]/g) || []).length / primerDesign.reverse.length) * 100) : 0}%
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={validatePrimers}
+                  disabled={!primerDesign.forward || !primerDesign.reverse}
+                  className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
+                >
+                  Validate Primer Design
+                </button>
+
+                {primerDesign.validated && (
+                  <div className="mt-4 p-4 bg-green-50 rounded-lg">
+                    <p className="text-green-800 font-semibold">✅ Primers validated successfully!</p>
+                    <button
+                      onClick={() => setStep(1)}
+                      className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                    >
+                      Continue to Master Mix Preparation
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+
+        case 1: // Prepare PCR Master Mix
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Prepare PCR Master Mix</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">Required Components (30 μL total):</h4>
+                  <div className="space-y-4">
+                    {[
+                      { name: 'template', label: 'Template DNA', target: 2, unit: 'μL' },
+                      { name: 'forward', label: 'Forward Primer (10μM)', target: 0.7, unit: 'μL' },
+                      { name: 'reverse', label: 'Reverse Primer (10μM)', target: 0.7, unit: 'μL' },
+                      { name: 'taq', label: 'BioMix Red (Taq)', target: 15, unit: 'μL' },
+                      { name: 'water', label: 'Sterile dH₂O', target: 11.6, unit: 'μL' }
+                    ].map(component => (
+                      <div key={component.name} className="flex items-center space-x-3">
+                        <div className="w-24 text-sm">{component.label}:</div>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={pcrReaction[component.name]}
+                          onChange={(e) => prepareMasterMix(component.name, parseFloat(e.target.value) || 0)}
+                          className="w-20 p-2 border rounded text-sm"
+                        />
+                        <span className="text-sm text-gray-600">{component.unit}</span>
+                        <span className="text-sm text-blue-600">(Target: {component.target}{component.unit})</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-4 p-3 bg-gray-50 rounded">
+                    <p className="font-semibold">Total Volume: {Object.values(pcrReaction).reduce((sum, val) => sum + val, 0).toFixed(1)} μL</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4">PCR Tube:</h4>
+                  <div className="w-32 h-40 bg-gray-200 rounded-lg mx-auto relative overflow-hidden border-2 border-gray-400">
+                    {pcrReaction.ready && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-pink-300 transition-all duration-500" style={{ height: '60%' }}>
+                        <div className="absolute bottom-2 left-0 right-0 text-center text-xs">
+                          Master Mix
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {pcrReaction.ready && (
+                    <div className="mt-6 text-center">
+                      <p className="text-green-600 font-semibold mb-3">✅ Master mix prepared correctly!</p>
+                      <button
+                        onClick={() => setStep(2)}
+                        className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to Thermal Cycling
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 2: // Set Up Thermal Cycling Parameters
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Set Up Thermal Cycling Parameters</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">PCR Protocol:</h4>
+                  <div className="space-y-3">
+                    <div className="p-3 border rounded bg-red-50">
+                      <p className="font-semibold text-red-800">Initial Denaturation</p>
+                      <p className="text-sm">95°C for 5 minutes</p>
+                    </div>
+                    
+                    <div className="p-3 border rounded bg-yellow-50">
+                      <p className="font-semibold text-yellow-800">35 Cycles of:</p>
+                      <ul className="text-sm mt-2 space-y-1">
+                        <li>• Denaturation: 95°C for 30 seconds</li>
+                        <li>• Annealing: 55°C for 30 seconds</li>
+                        <li>• Extension: 72°C for 30 seconds</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-3 border rounded bg-green-50">
+                      <p className="font-semibold text-green-800">Final Extension</p>
+                      <p className="text-sm">72°C for 5 minutes</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4">Thermal Cycler Setup:</h4>
+                  <div className="bg-gray-800 p-4 rounded-lg">
+                    <div className="bg-green-400 text-black text-center py-2 rounded mb-4 font-mono">
+                      THERMAL CYCLER
+                    </div>
+                    <div className="text-white space-y-2 text-sm">
+                      <div>Program: PCR_Standard</div>
+                      <div>Total Cycles: 35</div>
+                      <div>Estimated Time: 2h 45min</div>
+                      <div>Status: Ready</div>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => setStep(3)}
+                    className="mt-4 w-full bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition-colors"
+                  >
+                    Start PCR Program
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+
+        case 3: // Run PCR Thermal Cycling
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">PCR Thermal Cycling in Progress</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-gray-800 p-6 rounded-lg text-white">
+                    <div className="text-center mb-6">
+                      <div className="text-4xl font-bold mb-2">{thermalCycling.temperature}°C</div>
+                      <div className="text-lg capitalize">{thermalCycling.currentStep}</div>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm mb-2">
+                        <span>Cycle {thermalCycling.currentCycle + 1} of {thermalCycling.totalCycles}</span>
+                        <span>{thermalCycling.timeRemaining}s remaining</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-3">
+                        <div
+                          className={`h-3 rounded-full transition-all duration-300 ${
+                            thermalCycleSteps.find(s => s.name === thermalCycling.currentStep)?.color || 'bg-blue-500'
+                          }`}
+                          style={{ width: `${((30 - thermalCycling.timeRemaining) / 30) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${(thermalCycling.currentCycle / thermalCycling.totalCycles) * 100}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-center text-sm mt-2">Overall Progress</p>
+                    </div>
+
+                    <div className="flex justify-center space-x-4">
+                      <button
+                        onClick={() => setThermalCycling(prev => ({ ...prev, isRunning: true }))}
+                        disabled={thermalCycling.isRunning || thermalCycling.completed}
+                        className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-500 transition-colors"
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Start
+                      </button>
+                      <button
+                        onClick={() => setThermalCycling(prev => ({ ...prev, isRunning: false }))}
+                        disabled={!thermalCycling.isRunning}
+                        className="flex items-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:bg-gray-500 transition-colors"
+                      >
+                        <Pause className="w-4 h-4 mr-2" />
+                        Pause
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4">PCR Amplification Process:</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-red-500 rounded"></div>
+                      <div>
+                        <p className="font-semibold">Denaturation (95°C)</p>
+                        <p className="text-sm text-gray-600">DNA strands separate</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                      <div>
+                        <p className="font-semibold">Annealing (55°C)</p>
+                        <p className="text-sm text-gray-600">Primers bind to template</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-green-500 rounded"></div>
+                      <div>
+                        <p className="font-semibold">Extension (72°C)</p>
+                        <p className="text-sm text-gray-600">Taq polymerase synthesizes DNA</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {thermalCycling.completed && (
+                    <div className="mt-6 p-4 bg-green-50 rounded-lg">
+                      <p className="text-green-800 font-semibold text-center mb-4">
+                        🎉 PCR Amplification Complete!
+                      </p>
+                      <p className="text-sm text-green-700 text-center mb-4">
+                        DNA amplified ~{Math.pow(2, thermalCycling.totalCycles).toExponential(2)} times
+                      </p>
+                      <button
+                        onClick={() => setStep(4)}
+                        className="w-full bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to Gel Electrophoresis
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 4: // Prepare Agarose Gel
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Prepare Agarose Gel</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">Protocol:</h4>
+                  <ol className="list-decimal list-inside space-y-2 text-sm">
+                    <li>Prepare 300mL of 1X TAE buffer from 50X stock</li>
+                    <li>Add 2.4g agarose to buffer (0.8% gel)</li>
+                    <li>Microwave for 5 minutes until dissolved</li>
+                    <li>Cool to 60-70°C and add 15μL Safe Green</li>
+                    <li>Pour into gel casting tray with comb</li>
+                    <li>Allow to solidify for 20 minutes</li>
+                  </ol>
+
+                  <div className="mt-6 space-y-3">
+                    <button
+                      onClick={() => setGelElectrophoresis(prev => ({ ...prev, gelCast: true }))}
+                      disabled={gelElectrophoresis.gelCast}
+                      className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-green-500 transition-colors"
+                    >
+                      {gelElectrophoresis.gelCast ? '✅ Gel Cast Complete' : 'Cast Agarose Gel'}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">Gel Casting Apparatus:</h4>
+                  <div className="relative">
+                    <div className="w-64 h-32 bg-gray-300 rounded mx-auto border-2 border-gray-500">
+                      {gelElectrophoresis.gelCast && (
+                        <div className="w-full h-full bg-gradient-to-b from-blue-100 to-blue-200 rounded relative">
+                          {/* Wells */}
+                          <div className="absolute top-2 left-4 right-4 flex justify-between">
+                            {[1,2,3,4,5,6].map(i => (
+                              <div key={i} className="w-4 h-6 bg-blue-400 rounded-sm"></div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-center text-sm text-gray-600 mt-2">
+                      {gelElectrophoresis.gelCast ? 'Gel ready for sample loading' : 'Empty gel casting tray'}
+                    </p>
+                  </div>
+
+                  {gelElectrophoresis.gelCast && (
+                    <div className="mt-6 text-center">
+                      <button
+                        onClick={() => setStep(5)}
+                        className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Load Samples
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 5: // Load Samples and Run Electrophoresis
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Load Samples and Run Electrophoresis</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">Sample Loading:</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-8 bg-purple-400 rounded-sm"></div>
+                      <div>
+                        <p className="font-semibold">Well 1: DNA Ladder</p>
+                        <p className="text-sm text-gray-600">10μL ladder + 2μL loading dye</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-8 bg-pink-400 rounded-sm"></div>
+                      <div>
+                        <p className="font-semibold">Well 2: PCR Product</p>
+                        <p className="text-sm text-gray-600">10μL sample + 2μL loading dye</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-8 bg-gray-400 rounded-sm"></div>
+                      <div>
+                        <p className="font-semibold">Well 3: Negative Control</p>
+                        <p className="text-sm text-gray-600">No template control</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setGelElectrophoresis(prev => ({ ...prev, samplesLoaded: true }))}
+                    disabled={gelElectrophoresis.samplesLoaded}
+                    className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-green-500 transition-colors"
+                  >
+                    {gelElectrophoresis.samplesLoaded ? '✅ Samples Loaded' : 'Load All Samples'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">Electrophoresis Chamber:</h4>
+                  <div className="bg-gray-800 p-4 rounded-lg">
+                    <div className="w-64 h-32 bg-blue-200 rounded mx-auto border-2 border-gray-600 relative">
+                      {/* Electrode indicators */}
+                      <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 text-red-500 font-bold">(-)</div>
+                      <div className="absolute -right-6 top-1/2 transform -translate-y-1/2 text-black font-bold">(+)</div>
+                      
+                      {/* Wells with samples if loaded */}
+                      {gelElectrophoresis.samplesLoaded && (
+                        <div className="absolute top-2 left-4 right-4 flex justify-between">
+                          <div className="w-4 h-6 bg-purple-600 rounded-sm"></div>
+                          <div className="w-4 h-6 bg-pink-600 rounded-sm"></div>
+                          <div className="w-4 h-6 bg-gray-600 rounded-sm"></div>
+                        </div>
+                      )}
+                      
+                      {/* Migration visualization during run */}
+                      {gelElectrophoresis.running && (
+                        <div className="absolute top-8 left-4 right-4 flex justify-between">
+                          {[1,2,3].map(i => (
+                            <div key={i} className="relative">
+                              <div 
+                                className="w-1 h-2 bg-blue-800 rounded transition-all duration-1000"
+                                style={{ 
+                                  transform: `translateY(${(gelElectrophoresis.timeElapsed / 1800) * 60}px)`,
+                                  opacity: i === 3 ? 0.3 : 1 // Negative control is faint
+                                }}
+                              ></div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="text-center mt-4">
+                      <div className="text-white mb-2">Voltage: {gelElectrophoresis.voltage}V</div>
+                      <div className="text-white mb-4">
+                        Time: {Math.floor(gelElectrophoresis.timeElapsed / 60)}:{(gelElectrophoresis.timeElapsed % 60).toString().padStart(2, '0')}
+                      </div>
+                      
+                      <button
+                        onClick={() => setGelElectrophoresis(prev => ({ ...prev, running: true }))}
+                        disabled={!gelElectrophoresis.samplesLoaded || gelElectrophoresis.running || gelElectrophoresis.results}
+                        className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 disabled:bg-gray-500 transition-colors"
+                      >
+                        {gelElectrophoresis.running ? 'Running...' : 'Start Electrophoresis'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {gelElectrophoresis.results && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold mb-2">✅ Electrophoresis Complete!</p>
+                      <button
+                        onClick={() => setStep(6)}
+                        className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
+                      >
+                        Analyze Results
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 6: // Analyze Results
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Analyze PCR Results</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">Gel Documentation:</h4>
+                  <div className="bg-black p-4 rounded-lg">
+                    <div className="w-full h-64 bg-gray-900 rounded relative">
+                      {/* UV transilluminator effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20 rounded"></div>
+                      
+                      {/* DNA bands visualization */}
+                      {gelElectrophoresis.results && (
+                        <>
+                          {/* Ladder bands */}
+                          <div className="absolute left-8 top-4">
+                            {gelElectrophoresis.results.ladder.bands.map((size, index) => (
+                              <div
+                                key={size}
+                                className="w-4 h-1 bg-orange-400 mb-2 rounded shadow-lg"
+                                style={{ 
+                                  filter: 'drop-shadow(0 0 4px #fb923c)',
+                                  transform: `translateY(${index * 8}px)`
+                                }}
+                              ></div>
+                            ))}
+                            <div className="text-orange-300 text-xs mt-2 text-center">Ladder</div>
+                          </div>
+                          
+                          {/* PCR product band */}
+                          <div className="absolute left-20 top-20">
+                            <div 
+                              className="w-4 h-2 bg-green-400 rounded shadow-lg"
+                              style={{ filter: 'drop-shadow(0 0 6px #4ade80)' }}
+                            ></div>
+                            <div className="text-green-300 text-xs mt-2 text-center">Sample</div>
+                          </div>
+                          
+                          {/* No band for negative control */}
+                          <div className="absolute left-32 top-4">
+                            <div className="text-gray-500 text-xs mt-16 text-center">Control</div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <div className="text-center mt-2 text-purple-300 text-sm">UV Transilluminator View</div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4">Results Analysis:</h4>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <h5 className="font-semibold text-green-800 mb-2">✅ PCR Success Indicators:</h5>
+                      <ul className="text-sm text-green-700 space-y-1">
+                        <li>• Clear band at expected size (~500 bp)</li>
+                        <li>• Strong fluorescence intensity</li>
+                        <li>• No contamination in negative control</li>
+                        <li>• Ladder shows proper separation</li>
+                      </ul>
+                    </div>
+
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <h5 className="font-semibold text-blue-800 mb-2">📊 Band Analysis:</h5>
+                      <div className="text-sm text-blue-700 space-y-1">
+                        <p><strong>Lane 1 (Ladder):</strong> Multiple bands (1000-100 bp)</p>
+                        <p><strong>Lane 2 (PCR Product):</strong> Single band at ~500 bp</p>
+                        <p><strong>Lane 3 (Negative Control):</strong> No bands detected</p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-yellow-50 rounded-lg">
+                      <h5 className="font-semibold text-yellow-800 mb-2">🔬 Interpretation:</h5>
+                      <p className="text-sm text-yellow-700">
+                        The PCR amplification was successful. The presence of a single, clear band at the expected 
+                        size indicates specific amplification of the target sequence. The absence of bands in the 
+                        negative control confirms no contamination occurred.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 text-center">
+                    <div className="bg-green-50 p-4 rounded-lg mb-4">
+                      <p className="text-green-800 font-semibold">🎉 PCR Experiment Complete!</p>
+                      <p className="text-green-700 text-sm">Grade: {mistakes.length === 0 ? 'A+' : mistakes.length <= 2 ? 'A' : 'B+'}</p>
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        setStudentProfile(prev => ({
+                          ...prev,
+                          experimentsCompleted: prev.experimentsCompleted + 1,
+                          totalScore: prev.totalScore + (mistakes.length === 0 ? 100 : Math.max(80, 100 - mistakes.length * 3)),
+                          badges: [...prev.badges, 'DNA Amplification Expert']
+                        }));
+                        setCurrentExperiment('dashboard');
+                      }}
+                      className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors"
+                    >
+                      Complete PCR Simulation
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+
+        default:
+          return <div>Step not found</div>;
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-900 via-orange-900 to-yellow-900 p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => setCurrentExperiment('dashboard')}
+              className="text-white hover:text-orange-300 transition-colors"
+            >
+              ← Back to Dashboard
+            </button>
+            <h1 className="text-3xl font-bold text-white">PCR Amplification</h1>
+            <div className="text-white">Step {step + 1} of {steps.length}</div>
+          </div>
+
+          <div className="mb-6">
+            <div className="w-full bg-gray-700 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-red-500 to-orange-500 h-3 rounded-full transition-all duration-300"
+                style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-orange-200 mt-2">{steps[step]}</p>
+          </div>
+
+          {mistakes.length > 0 && (
+            <div className="mb-6 bg-red-500/20 border border-red-500/50 rounded-lg p-4">
+              <h4 className="text-red-300 font-semibold mb-2">⚠️ Mistakes ({mistakes.length})</h4>
+              <ul className="text-red-200 text-sm space-y-1">
+                {mistakes.slice(-3).map((mistake, index) => (
+                  <li key={index}>• {mistake}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+            {renderStep()}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Gram Staining Component
+  const GramStaining = () => {
+    const [step, setStep] = useState(0);
+    const [selectedBacteria, setSelectedBacteria] = useState('ecoli');
+    const [stainingProgress, setStainingProgress] = useState({
+      crystalViolet: false,
+      iodine: false,
+      decolorizer: false,
+      safranin: false
+    });
+    const [microscopyView, setMicroscopyView] = useState('none');
+    const [timer, setTimer] = useState({ active: false, seconds: 0, target: 60 });
+    const [mistakes, setMistakes] = useState([]);
+
+    const bacteriaTypes = {
+      ecoli: {
+        name: 'E. coli',
+        type: 'Gram-negative',
+        finalColor: 'pink',
+        shape: 'rod',
+        description: 'Rod-shaped, Gram-negative bacteria'
+      },
+      saureus: {
+        name: 'S. aureus', 
+        type: 'Gram-positive',
+        finalColor: 'purple',
+        shape: 'cocci',
+        description: 'Spherical, Gram-positive bacteria in clusters'
+      }
+    };
+
+    const steps = [
+      "Prepare Bacterial Smear",
+      "Heat Fix the Slide",
+      "Apply Crystal Violet (Primary Stain)",
+      "Apply Iodine (Mordant)",
+      "Apply Decolorizer",
+      "Apply Safranin (Counterstain)",
+      "Microscopic Examination"
+    ];
+
+    useEffect(() => {
+      let interval;
+      if (timer.active && timer.seconds < timer.target) {
+        interval = setInterval(() => {
+          setTimer(prev => ({ ...prev, seconds: prev.seconds + 1 }));
+        }, 100); // Speed up for demo
+      } else if (timer.seconds >= timer.target) {
+        setTimer(prev => ({ ...prev, active: false }));
+      }
+      return () => clearInterval(interval);
+    }, [timer.active, timer.seconds, timer.target]);
+
+    const applyStain = (stainType) => {
+      if (stainType === 'crystalViolet' && !timer.active && timer.seconds === 0) {
+        setTimer({ active: true, seconds: 0, target: 60 });
+        setTimeout(() => {
+          setStainingProgress(prev => ({ ...prev, crystalViolet: true }));
+        }, 6000); // 60 seconds in demo time
+      } else if (stainType === 'iodine' && stainingProgress.crystalViolet) {
+        setTimer({ active: true, seconds: 0, target: 60 });
+        setTimeout(() => {
+          setStainingProgress(prev => ({ ...prev, iodine: true }));
+        }, 6000);
+      } else if (stainType === 'decolorizer' && stainingProgress.iodine) {
+        setStainingProgress(prev => ({ ...prev, decolorizer: true }));
+      } else if (stainType === 'safranin' && stainingProgress.decolorizer) {
+        setTimer({ active: true, seconds: 0, target: 60 });
+        setTimeout(() => {
+          setStainingProgress(prev => ({ ...prev, safranin: true }));
+        }, 6000);
+      } else {
+        setMistakes(prev => [...prev, `Cannot apply ${stainType} - complete previous steps first`]);
+      }
+    };
+
+    const renderBacterialCells = () => {
+      const bacteria = bacteriaTypes[selectedBacteria];
+      let cellColor = '#f3f4f6'; // Default gray
+      
+      if (stainingProgress.crystalViolet) cellColor = '#8b5cf6'; // Purple
+      if (stainingProgress.decolorizer && bacteria.type === 'Gram-negative') cellColor = '#f3f4f6'; // Decolorized
+      if (stainingProgress.safranin && bacteria.type === 'Gram-negative') cellColor = '#ec4899'; // Pink
+      if (stainingProgress.safranin && bacteria.type === 'Gram-positive') cellColor = '#8b5cf6'; // Stays purple
+
+      const cells = [];
+      for (let i = 0; i < 15; i++) {
+        const x = 50 + (Math.random() * 200);
+        const y = 50 + (Math.random() * 150);
+        
+        if (bacteria.shape === 'rod') {
+          cells.push(
+            <ellipse
+              key={i}
+              cx={x}
+              cy={y}
+              rx="12"
+              ry="4"
+              fill={cellColor}
+              stroke="#374151"
+              strokeWidth="0.5"
+              transform={`rotate(${Math.random() * 360} ${x} ${y})`}
+            />
+          );
+        } else {
+          cells.push(
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r="6"
+              fill={cellColor}
+              stroke="#374151"
+              strokeWidth="0.5"
+            />
+          );
+        }
+      }
+      return cells;
+    };
+
+    const renderStep = () => {
+      switch (step) {
+        case 0: // Prepare Bacterial Smear
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Prepare Bacterial Smear</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-4">Select Bacterial Culture:</h4>
+                  <div className="space-y-3">
+                    {Object.entries(bacteriaTypes).map(([key, bacteria]) => (
+                      <button
+                        key={key}
+                        onClick={() => setSelectedBacteria(key)}
+                        className={`w-full p-4 border-2 rounded-lg text-left transition-colors ${
+                          selectedBacteria === key 
+                            ? 'border-blue-500 bg-blue-50' 
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        <div className="font-semibold">{bacteria.name}</div>
+                        <div className="text-sm text-gray-600">{bacteria.description}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-6">
+                    <h4 className="font-semibold mb-3">Smear Preparation:</h4>
+                    <ol className="list-decimal list-inside text-sm space-y-1">
+                      <li>Place a small drop of water on clean slide</li>
+                      <li>Use inoculation loop to transfer bacterial culture</li>
+                      <li>Mix and spread evenly over 1cm² area</li>
+                      <li>Allow to air dry completely</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <h4 className="font-semibold mb-4">Microscope Slide:</h4>
+                  <div className="w-48 h-20 bg-gray-100 border-2 border-gray-400 rounded mx-auto relative">
+                    <div className="absolute inset-4 bg-gray-200 rounded-sm">
+                      <div className="w-full h-full flex items-center justify-center text-xs text-gray-600">
+                        Bacterial Smear
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-2">Clean glass slide with bacterial smear</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setStep(1)}
+                className="mt-6 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
+              >
+                Continue to Heat Fixation
+              </button>
+            </div>
+          );
+
+        case 1: // Heat Fix the Slide
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Heat Fix the Slide</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-yellow-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-yellow-800 mb-2">⚠️ Safety Warning</h4>
+                    <p className="text-yellow-700 text-sm">
+                      Always use tongs when handling slides over flame. 
+                      Avoid overheating to prevent cell distortion.
+                    </p>
+                  </div>
+
+                  <h4 className="font-semibold mb-3">Heat Fixation Protocol:</h4>
+                  <ol className="list-decimal list-inside text-sm space-y-2">
+                    <li>Ensure bacterial smear is completely air-dried</li>
+                    <li>Hold slide with tongs, smear side up</li>
+                    <li>Pass slide through Bunsen burner flame 2-3 times</li>
+                    <li>Allow slide to cool before proceeding</li>
+                  </ol>
+
+                  <div className="mt-4 p-3 bg-blue-50 rounded">
+                    <p className="text-blue-800 text-sm">
+                      <strong>Purpose:</strong> Heat fixation kills bacteria and adheres them to the slide, 
+                      preventing washout during staining procedures.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <div className="relative">
+                    <div className="w-16 h-32 bg-blue-600 rounded-t-full mx-auto mb-4 relative">
+                      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
+                        <div className="w-8 h-8 bg-orange-400 rounded-full animate-pulse"></div>
+                        <div className="w-6 h-6 bg-yellow-400 rounded-full mx-auto animate-pulse"></div>
+                        <div className="w-4 h-4 bg-red-400 rounded-full mx-auto animate-pulse"></div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600">Bunsen Burner</p>
+                  </div>
+
+                  <div className="mt-6">
+                    <div className="w-48 h-20 bg-gray-100 border-2 border-gray-400 rounded mx-auto relative">
+                      <div className="absolute inset-4 bg-gray-300 rounded-sm flex items-center justify-center">
+                        <Flame className="w-4 h-4 text-orange-500" />
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">Heat-fixed slide</p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setStep(2)}
+                className="mt-6 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
+              >
+                Begin Gram Staining Protocol
+              </button>
+            </div>
+          );
+
+        case 2: // Apply Crystal Violet
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Apply Crystal Violet (Primary Stain)</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <div className="mb-6">
+                    <h4 className="font-semibold mb-3">Staining Protocol:</h4>
+                    <ol className="list-decimal list-inside text-sm space-y-2">
+                      <li>Cover bacterial smear completely with crystal violet</li>
+                      <li>Incubate for 60 seconds</li>
+                      <li>Rinse gently with distilled water</li>
+                      <li>Blot dry with bibulous paper</li>
+                    </ol>
+                  </div>
+
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-16 bg-purple-600 rounded border-2 border-purple-800 flex items-end justify-center">
+                      <div className="w-2 h-2 bg-purple-800 rounded-full mb-1"></div>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Crystal Violet Solution</p>
+                      <p className="text-sm text-gray-600">Primary stain - colors all bacteria purple</p>
+                    </div>
+                  </div>
+
+                  {timer.active && (
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-600 mb-2">
+                          {timer.target - timer.seconds}s
+                        </div>
+                        <div className="w-full bg-purple-200 rounded-full h-2">
+                          <div
+                            className="bg-purple-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${(timer.seconds / timer.target) * 100}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-purple-700 text-sm mt-2">Staining in progress...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => applyStain('crystalViolet')}
+                    disabled={stainingProgress.crystalViolet || timer.active}
+                    className="w-full mt-4 bg-purple-500 text-white px-6 py-2 rounded hover:bg-purple-600 disabled:bg-gray-400 transition-colors"
+                  >
+                    {stainingProgress.crystalViolet ? '✅ Crystal Violet Applied' : 'Apply Crystal Violet'}
+                  </button>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
+                  <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
+                    <svg className="absolute inset-4 w-56 h-56">
+                      {renderBacterialCells()}
+                    </svg>
+                    <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+                      400x
+                    </div>
+                  </div>
+                  
+                  {stainingProgress.crystalViolet && (
+                    <div className="mt-4 text-center">
+                      <p className="text-green-600 font-semibold">All bacteria appear purple</p>
+                      <button
+                        onClick={() => setStep(3)}
+                        className="mt-2 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
+                      >
+                        Continue to Iodine Treatment
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 3: // Apply Iodine
+          return (
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Apply Iodine (Mordant)</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <div className="bg-amber-50 p-4 rounded-lg mb-4">
+                    <h4 className="font-semibold text-amber-800 mb-2">🔬 Function of Mordant</h4>
+                    <p className="text-amber-700 text-sm">
+                      Iodine forms complexes with crystal violet, creating larger molecules that are 
+                      harder to remove from thick peptidoglycan layers in Gram-positive bacteria.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-16 bg-amber-600 rounded border-2 border-amber-800 flex items-end justify-center">
+                      <div className="w-2 h-2 bg-amber-800 rounded-full mb-1"></div>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Gram's Iodine Solution</p>
+                      <p className="text
