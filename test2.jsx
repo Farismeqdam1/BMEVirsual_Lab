@@ -4882,4 +4882,268 @@ export default BiomedicalLabPlatform;
             content: (
               <div className="space-y-4">
                 <h4 className="font-semibold text-lg">By the end of this lab, you will be able to:</h4>
-                <ul className
+                <ul className="list-disc list-inside space-y-2">
+                 <li>Understand the principle of the Bradford protein assay</li>
+                 <li>Prepare a standard curve using BSA standards</li>
+                 <li>Calculate protein concentrations from absorbance readings</li>
+                 <li>Use a microplate reader and spectrophotometer</li>
+                 <li>Apply statistical analysis to experimental data</li>
+               </ul>
+             </div>
+           )
+         },
+         {
+           title: 'Background Theory',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">Bradford Assay Principle</h4>
+               <p>The Bradford assay is based on the binding of Coomassie Brilliant Blue G-250 to basic amino acids (arginine, lysine, and histidine) in proteins.</p>
+               <div className="bg-purple-50 p-4 rounded mt-4">
+                 <h5 className="font-semibold text-purple-800">Key Points:</h5>
+                 <ul className="list-disc list-inside text-sm space-y-1">
+                   <li>Dye binds to proteins causing color change from brown to blue</li>
+                   <li>Absorbance measured at 595 nm</li>
+                   <li>Linear relationship between protein concentration and absorbance</li>
+                   <li>Range: 0-2000 μg/mL protein</li>
+                 </ul>
+               </div>
+             </div>
+           )
+         },
+         {
+           title: 'Equipment and Materials',
+           content: (
+             <div className="space-y-4">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div>
+                   <h5 className="font-semibold">Equipment:</h5>
+                   <ul className="list-disc list-inside text-sm space-y-1">
+                     <li>Microplate reader</li>
+                     <li>Micropipettes (P10, P200, P1000)</li>
+                     <li>96-well microplate</li>
+                     <li>Vortex mixer</li>
+                   </ul>
+                 </div>
+                 <div>
+                   <h5 className="font-semibold">Materials:</h5>
+                   <ul className="list-disc list-inside text-sm space-y-1">
+                     <li>Bradford reagent</li>
+                     <li>BSA standard solutions</li>
+                     <li>Unknown protein samples</li>
+                     <li>Distilled water</li>
+                   </ul>
+                 </div>
+               </div>
+             </div>
+           )
+         }
+       ]
+     },
+     'pcr-simulation': {
+       title: 'PCR Amplification - Pre-Lab',
+       sections: [
+         {
+           title: 'Learning Objectives',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">By the end of this lab, you will be able to:</h4>
+               <ul className="list-disc list-inside space-y-2">
+                 <li>Understand the principles of PCR amplification</li>
+                 <li>Design appropriate PCR primers</li>
+                 <li>Set up PCR reactions with proper controls</li>
+                 <li>Analyze PCR products using gel electrophoresis</li>
+                 <li>Troubleshoot common PCR problems</li>
+               </ul>
+             </div>
+           )
+         },
+         {
+           title: 'PCR Theory',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">Three Steps of PCR</h4>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div className="bg-red-50 p-4 rounded">
+                   <h5 className="font-semibold text-red-800">1. Denaturation (95°C)</h5>
+                   <p className="text-sm">DNA double helix separates into single strands</p>
+                 </div>
+                 <div className="bg-blue-50 p-4 rounded">
+                   <h5 className="font-semibold text-blue-800">2. Annealing (50-65°C)</h5>
+                   <p className="text-sm">Primers bind to complementary sequences</p>
+                 </div>
+                 <div className="bg-green-50 p-4 rounded">
+                   <h5 className="font-semibold text-green-800">3. Extension (72°C)</h5>
+                   <p className="text-sm">Taq polymerase synthesizes new DNA strands</p>
+                 </div>
+               </div>
+             </div>
+           )
+         },
+         {
+           title: 'Primer Design Guidelines',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">Primer Design Criteria</h4>
+               <div className="bg-yellow-50 p-4 rounded">
+                 <ul className="list-disc list-inside space-y-2">
+                   <li><strong>Length:</strong> 18-25 nucleotides</li>
+                   <li><strong>GC Content:</strong> 40-60%</li>
+                   <li><strong>Melting Temperature:</strong> 50-65°C</li>
+                   <li><strong>Avoid:</strong> Secondary structures, primer dimers</li>
+                   <li><strong>Specificity:</strong> Unique to target sequence</li>
+                 </ul>
+               </div>
+             </div>
+           )
+         }
+       ]
+     },
+     'gram-staining': {
+       title: 'Gram Staining - Pre-Lab',
+       sections: [
+         {
+           title: 'Learning Objectives',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">By the end of this lab, you will be able to:</h4>
+               <ul className="list-disc list-inside space-y-2">
+                 <li>Understand the principle of Gram staining</li>
+                 <li>Differentiate between Gram-positive and Gram-negative bacteria</li>
+                 <li>Perform proper heat fixation of bacterial smears</li>
+                 <li>Apply staining reagents in correct sequence</li>
+                 <li>Interpret staining results and bacterial morphology</li>
+               </ul>
+             </div>
+           )
+         },
+         {
+           title: 'Staining Theory',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">Gram Staining Mechanism</h4>
+               <p>The Gram stain differentiates bacteria based on cell wall structure, specifically the thickness of the peptidoglycan layer.</p>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                 <div className="bg-purple-50 p-4 rounded">
+                   <h5 className="font-semibold text-purple-800">Gram-Positive</h5>
+                   <ul className="text-sm space-y-1">
+                     <li>• Thick peptidoglycan layer (20-80nm)</li>
+                     <li>• Retains crystal violet-iodine complex</li>
+                     <li>• Appears purple/violet</li>
+                     <li>• Examples: S. aureus, B. subtilis</li>
+                   </ul>
+                 </div>
+                 <div className="bg-pink-50 p-4 rounded">
+                   <h5 className="font-semibold text-pink-800">Gram-Negative</h5>
+                   <ul className="text-sm space-y-1">
+                     <li>• Thin peptidoglycan layer (2-7nm)</li>
+                     <li>• Loses crystal violet during decolorization</li>
+                     <li>• Appears pink/red from safranin</li>
+                     <li>• Examples: E. coli, P. aeruginosa</li>
+                   </ul>
+                 </div>
+               </div>
+             </div>
+           )
+         },
+         {
+           title: 'Safety and Technique',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg text-red-600">⚠️ Laboratory Safety</h4>
+               <ul className="list-disc list-inside space-y-2">
+                 <li>Work with bacterial cultures using aseptic technique</li>
+                 <li>Use Bunsen burner safely - tie back hair, avoid loose clothing</li>
+                 <li>Handle staining reagents carefully - some are toxic</li>
+                 <li>Dispose of bacterial materials in designated biohazard containers</li>
+                 <li>Clean work area with disinfectant before and after use</li>
+               </ul>
+               <div className="bg-blue-50 p-4 rounded mt-4">
+                 <h5 className="font-semibold text-blue-800">Critical Technique Points:</h5>
+                 <ul className="list-disc list-inside text-sm space-y-1">
+                   <li>Heat fixation: Pass slide through flame 2-3 times quickly</li>
+                   <li>Decolorization: Most critical step - add drop by drop until no more purple runs off</li>
+                   <li>Timing: Follow incubation times precisely for each reagent</li>
+                 </ul>
+               </div>
+             </div>
+           )
+         }
+       ]
+     },
+     'cell-staining': {
+       title: 'Cytoskeleton & Nucleus Staining - Pre-Lab',
+       sections: [
+         {
+           title: 'Learning Objectives',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">By the end of this lab, you will be able to:</h4>
+               <ul className="list-disc list-inside space-y-2">
+                 <li>Understand principles of fluorescence microscopy</li>
+                 <li>Perform cell permeabilization and blocking procedures</li>
+                 <li>Use specific fluorescent probes for cellular structures</li>
+                 <li>Visualize actin filaments and nuclei simultaneously</li>
+                 <li>Interpret multi-channel fluorescence images</li>
+               </ul>
+             </div>
+           )
+         },
+         {
+           title: 'Fluorescence Theory',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">Fluorescence Staining Principles</h4>
+               <p>Fluorescent molecules absorb light at one wavelength (excitation) and emit light at a longer wavelength (emission).</p>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                 <div className="bg-green-50 p-4 rounded">
+                   <h5 className="font-semibold text-green-800">Phalloidin-Alexa 488</h5>
+                   <ul className="text-sm space-y-1">
+                     <li>• Target: F-actin filaments</li>
+                     <li>• Excitation: 495nm (blue light)</li>
+                     <li>• Emission: 519nm (green light)</li>
+                     <li>• Shows cytoskeleton structure</li>
+                   </ul>
+                 </div>
+                 <div className="bg-blue-50 p-4 rounded">
+                   <h5 className="font-semibold text-blue-800">DAPI</h5>
+                   <ul className="text-sm space-y-1">
+                     <li>• Target: A-T rich DNA regions</li>
+                     <li>• Excitation: 358nm (UV light)</li>
+                     <li>• Emission: 461nm (blue light)</li>
+                     <li>• Shows cell nuclei</li>
+                   </ul>
+                 </div>
+               </div>
+             </div>
+           )
+         },
+         {
+           title: 'Sample Preparation',
+           content: (
+             <div className="space-y-4">
+               <h4 className="font-semibold text-lg">Cell Preparation Protocol</h4>
+               <div className="bg-yellow-50 p-4 rounded">
+                 <h5 className="font-semibold text-yellow-800">Key Steps:</h5>
+                 <ol className="list-decimal list-inside space-y-2 text-sm">
+                   <li><strong>Permeabilization:</strong> Triton X-100 creates membrane pores</li>
+                   <li><strong>Blocking:</strong> BSA prevents non-specific binding</li>
+                   <li><strong>Primary staining:</strong> Phalloidin binds to actin</li>
+                   <li><strong>Nuclear staining:</strong> DAPI binds to DNA</li>
+                   <li><strong>Imaging:</strong> Multi-channel fluorescence microscopy</li>
+                 </ol>
+               </div>
+               <div className="bg-red-50 p-4 rounded mt-4">
+                 <h5 className="font-semibold text-red-800">⚠️ Important Notes:</h5>
+                 <ul className="list-disc list-inside text-sm space-y-1">
+                   <li>Protect fluorescent samples from light to prevent photobleaching</li>
+                   <li>Work quickly once fluorescent stains are applied</li>
+                   <li>Use proper filter sets for each fluorophore</li>
+                   <li>Store stained samples at 4°C if not imaging immediately</li>
+                 </ul>
+               </div>
+             </div>
+           )
+         }
+       ]
+     }
+   };
