@@ -8,7 +8,13 @@
 
                   <div className="bg-blue-50 p-4 rounded-lg mb-4">
                     <h4 className="font-semibold text-blue-800 mb-2">🔬 Decolorization Mechanism</h4>
-                    <ul className="text-sm text-blue-700 space-y-1">
+                    <ul className="list-disc list-inside space-y-2">
+                  <li>Understand the principle of the Bradford protein assay</li>
+                  <li>Prepare a standard curve using BSA standards</li>
+                  <li>Calculate protein concentrations from absorbance readings</li>
+                  <li>Use a microplate reader and spectrophotometer</li>
+                  <li>Apply statistical analysis to experimental data</li>
+                </ul>="text-sm text-blue-700 space-y-1">
                       <li>• <strong>Gram-positive:</strong> Thick peptidoglycan retains purple complexes</li>
                       <li>• <strong>Gram-negative:</strong> Thin peptidoglycan allows complex removal</li>
                       <li>• Alcohol/acetone dissolves lipids in outer membrane</li>
@@ -4809,7 +4815,10 @@ const BiomedicalLabPlatform = () => {
       {currentExperiment === 'dashboard' && <Dashboard />}
       {currentExperiment === 'leaderboard' && <Leaderboard />}
       {currentExperiment === 'osmotic-solutions' && !showQuiz && !showPreLab && <OsmoticSolutions />}
-      {/* Other experiments would be rendered here */}
+      {currentExperiment === 'bradford-assay' && !showQuiz && !showPreLab && <BradfordAssay />}
+      {currentExperiment === 'pcr-simulation' && !showQuiz && !showPreLab && <PCRSimulation />}
+      {currentExperiment === 'gram-staining' && !showQuiz && !showPreLab && <GramStaining />}
+      {currentExperiment === 'cell-staining' && !showQuiz && !showPreLab && <CellStaining />}
     </div>
   );
 };
