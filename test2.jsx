@@ -5,7 +5,6 @@
                       no more purple dye runs off the slide. Over-decolorization causes false negatives.
                     </p>
                   </div>
-                </div>
                 <div>
                   <div className="bg-blue-50 p-4 rounded-lg mb-4">
                     <h4 className="font-semibold text-blue-800 mb-2">🔬 Decolorization Mechanism</h4>
