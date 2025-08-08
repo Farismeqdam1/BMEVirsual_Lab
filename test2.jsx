@@ -1,245 +1,242 @@
-                 <div>
-                  <div className="bg-red-50 p-4 rounded-lg mb-4">
-                    <h4 className="font-semibold text-red-800 mb-2">⚠️ Critical Step!</h4>
-                    <p className="text-red-700 text-sm">
-                      This is the most critical step! Add decolorizer drop by drop until 
-                      no more purple dye runs off the slide. Over-decolorization causes false negatives.
-                    </p>
-                  </div>
-                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                    <h4 className="font-semibold text-blue-800 mb-2">🔬 Decolorization Mechanism</h4>
-                    <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• <strong>Gram-positive:</strong> Thick peptidoglycan retains purple complexes</li>
-                      <li>• <strong>Gram-negative:</strong> Thin peptidoglycan allows complex removal</li>
-                      <li>• Alcohol/acetone dissolves lipids in outer membrane</li>
-                    </ul>
-                  </div>
+<div className="bg-white rounded-lg p-6">
+  <h3 className="text-2xl font-bold mb-6">Apply Decolorizer</h3>
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div>
+      <div className="bg-red-50 p-4 rounded-lg mb-4">
+        <h4 className="font-semibold text-red-800 mb-2">⚠️ Critical Step!</h4>
+        <p className="text-red-700 text-sm">
+          This is the most critical step! Add decolorizer drop by drop until 
+          no more purple dye runs off the slide. Over-decolorization causes false negatives.
+        </p>
+      </div>
+      <div className="bg-blue-50 p-4 rounded-lg mb-4">
+        <h4 className="font-semibold text-blue-800 mb-2">🔬 Decolorization Mechanism</h4>
+        <ul className="text-sm text-blue-700 space-y-1">
+          <li>• <strong>Gram-positive:</strong> Thick peptidoglycan retains purple complexes</li>
+          <li>• <strong>Gram-negative:</strong> Thin peptidoglycan allows complex removal</li>
+          <li>• Alcohol/acetone dissolves lipids in outer membrane</li>
+        </ul>
+      </div>
 
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-12 h-16 bg-red-300 rounded border-2 border-red-500 flex items-end justify-center">
-                      <Droplets className="w-6 h-6 text-red-700 mb-1" />
-                    </div>
-                    <div>
-                      <p className="font-semibold">Ethyl Alcohol Decolorizer</p>
-                      <p className="text-sm text-gray-600">Removes stain from Gram-negative bacteria</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
-                  <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
-                    <svg className="absolute inset-4 w-56 h-56">
-                      {renderBacterialCells()}
-                    </svg>
-                    <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
-                      1000x
-                    </div>
-                  </div>
-                  <p className="text-center text-sm text-gray-600 mt-2">
-                    {stainingProgress.decolorized ? 
-                      (bacteriaTypes[selectedBacteria].type === 'Gram-positive' ? 
-                        'Bacteria remain purple (Gram-positive)' : 
-                        'Bacteria appear colorless (Gram-negative)'
-                      ) : 'Ready for decolorization'
-                    }
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => applyStain('decolorizer')}
-                disabled={stainingProgress.decolorized}
-                className="mt-6 bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 disabled:bg-gray-400"
-              >
-                {stainingProgress.decolorized ? '✅ Decolorizer Applied' : 'Apply Decolorizer'}
-              </button>
-            </div>
-          )}
-
-          {step === 7 && (
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="text-2xl font-bold mb-6">Apply Safranin (Counterstain)</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <div className="bg-pink-50 p-4 rounded-lg mb-4">
-                    <h4 className="font-semibold text-pink-800 mb-2">🔬 Counterstain Purpose</h4>
-                    <p className="text-pink-700 text-sm">
-                      Safranin provides color to decolorized Gram-negative bacteria, 
-                      making them visible as pink/red. Gram-positive bacteria remain purple 
-                      because the darker crystal violet masks the lighter safranin.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-12 h-16 bg-pink-400 rounded border-2 border-pink-600 flex items-end justify-center">
-                      <Droplets className="w-6 h-6 text-white mb-1" />
-                    </div>
-                    <div>
-                      <p className="font-semibold">Safranin Solution</p>
-                      <p className="text-sm text-gray-600">Counterstain - colors decolorized bacteria pink</p>
-                    </div>
-                  </div>
-
-                  <div className="bg-green-50 p-4 rounded">
-                    <h5 className="font-semibold text-green-800 mb-2">Final Results:</h5>
-                    <ul className="text-sm text-green-700 space-y-1">
-                      <li>• <strong>Gram-positive:</strong> Purple/violet color</li>
-                      <li>• <strong>Gram-negative:</strong> Pink/red color</li>
-                      <li>• Clear differentiation between bacterial types</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
-                  <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
-                    <svg className="absolute inset-4 w-56 h-56">
-                      {renderBacterialCells()}
-                    </svg>
-                    <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
-                      1000x
-                    </div>
-                  </div>
-                  <p className="text-center text-sm text-gray-600 mt-2">
-                    {stainingProgress.safranin ? 
-                      `Final result: ${bacteriaTypes[selectedBacteria].finalColor} ${bacteriaTypes[selectedBacteria].name}` : 
-                      'Ready for counterstain'
-                    }
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => applyStain('safranin')}
-                disabled={stainingProgress.safranin}
-                className="mt-6 bg-pink-500 text-white px-6 py-2 rounded hover:bg-pink-600 disabled:bg-gray-400"
-              >
-                {stainingProgress.safranin ? '✅ Safranin Applied' : 'Apply Safranin'}
-              </button>
-            </div>
-          )}
-
-          {step === 9 && (
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="text-2xl font-bold mb-6">Microscopic Examination and Results</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-4">Final Microscopic Analysis:</h4>
-                  <div className="w-80 h-80 bg-black rounded-full mx-auto relative border-4 border-gray-600 mb-4">
-                    <svg className="absolute inset-4 w-72 h-72">
-                      {renderBacterialCells()}
-                    </svg>
-                    <div className="absolute bottom-4 right-4 text-white text-xs bg-black/50 px-2 py-1 rounded">
-                      1000x Oil Immersion
-                    </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className={`inline-block px-4 py-2 rounded-lg font-semibold ${
-                      bacteriaTypes[selectedBacteria].finalColor === 'purple' 
-                        ? 'bg-purple-100 text-purple-800 border border-purple-300' 
-                        : 'bg-pink-100 text-pink-800 border border-pink-300'
-                    }`}>
-                      {bacteriaTypes[selectedBacteria].name}: {bacteriaTypes[selectedBacteria].type}
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-4">Results Analysis:</h4>
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg border ${
-                      bacteriaTypes[selectedBacteria].finalColor === 'purple' 
-                        ? 'bg-purple-50 border-purple-200' 
-                        : 'bg-pink-50 border-pink-200'
-                    }`}>
-                      <h5 className={`font-semibold mb-2 ${
-                        bacteriaTypes[selectedBacteria].finalColor === 'purple' 
-                          ? 'text-purple-800' 
-                          : 'text-pink-800'
-                      }`}>
-                        {bacteriaTypes[selectedBacteria].name} Classification:
-                      </h5>
-                      <ul className={`text-sm space-y-1 ${
-                        bacteriaTypes[selectedBacteria].finalColor === 'purple' 
-                          ? 'text-purple-700' 
-                          : 'text-pink-700'
-                      }`}>
-                        <li><strong>Result:</strong> {bacteriaTypes[selectedBacteria].type}</li>
-                        <li><strong>Color:</strong> {bacteriaTypes[selectedBacteria].finalColor}</li>
-                        <li><strong>Morphology:</strong> {bacteriaTypes[selectedBacteria].shape}</li>
-                        <li><strong>Cell Wall:</strong> {
-                          bacteriaTypes[selectedBacteria].type === 'Gram-positive' 
-                            ? 'Thick peptidoglycan layer (20-80nm)' 
-                            : 'Thin peptidoglycan + outer membrane'
-                        }</li>
-                      </ul>
-                    </div>
-
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h5 className="font-semibold text-blue-800 mb-2">Clinical Significance:</h5>
-                      <p className="text-sm text-blue-700">
-                        {bacteriaTypes[selectedBacteria].type === 'Gram-positive' 
-                          ? 'Gram-positive bacteria are generally more susceptible to penicillin, vancomycin, and β-lactam antibiotics due to their accessible peptidoglycan layer.'
-                          : 'Gram-negative bacteria have an outer membrane barrier that can make them more resistant to certain antibiotics. They may require different treatment approaches.'
-                        }
-                      </p>
-                    </div>
-
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <h5 className="font-semibold text-green-800 mb-2">Lab Performance Summary:</h5>
-                      <div className="text-sm text-green-700 space-y-1">
-                        <p><strong>Actions Completed:</strong> {userActions.length}</p>
-                        <p><strong>Technical Errors:</strong> {mistakes.length}</p>
-                        <p><strong>Staining Result:</strong> {bacteriaTypes[selectedBacteria].type} (Correct)</p>
-                        <p><strong>Grade:</strong> {mistakes.length === 0 ? 'A+' : mistakes.length <= 2 ? 'A' : 'B+'}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => {
-                        const grade = mistakes.length === 0 ? 100 : Math.max(75, 100 - mistakes.length * 5);
-                        const updatedProfile = {
-                          ...studentProfile,
-                          experimentsCompleted: studentProfile.experimentsCompleted + 1,
-                          totalScore: studentProfile.totalScore + grade,
-                          labProgress: {
-                            ...studentProfile.labProgress,
-                            'gram-staining': 'completed'
-                          },
-                          badges: [...new Set([...studentProfile.badges, 'Bacterial Classification Expert'])]
-                        };
-                        saveUserData(updatedProfile);
-                        setCurrentExperiment('dashboard');
-                      }}
-                      className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600"
-                    >
-                      Complete Gram Staining Lab
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+      <div className="flex items-center space-x-3 mb-4">
+        <div className="w-12 h-16 bg-red-300 rounded border-2 border-red-500 flex items-end justify-center">
+          <Droplets className="w-6 h-6 text-red-700 mb-1" />
         </div>
-
-        {mistakes.length > 0 && (
-          <div className="mt-6 bg-red-500/20 border border-red-500/50 rounded-lg p-4">
-            <h4 className="text-red-300 font-semibold mb-2">⚠️ Lab Notes ({mistakes.length} issues)</h4>
-            <ul className="text-red-200 text-sm space-y-1">
-              {mistakes.slice(-3).map((mistake, index) => (
-                <li key={index}>• {mistake}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div>
+          <p className="font-semibold">Ethyl Alcohol Decolorizer</p>
+          <p className="text-sm text-gray-600">Removes stain from Gram-negative bacteria</p>
+        </div>
       </div>
     </div>
-  );
-};
+
+    <div>
+      <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
+      <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
+        <svg className="absolute inset-4 w-56 h-56">
+          {renderBacterialCells()}
+        </svg>
+        <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+          1000x
+        </div>
+      </div>
+      <p className="text-center text-sm text-gray-600 mt-2">
+        {stainingProgress.decolorized ? 
+          (bacteriaTypes[selectedBacteria].type === 'Gram-positive' ? 
+            'Bacteria remain purple (Gram-positive)' : 
+            'Bacteria appear colorless (Gram-negative)'
+          ) : 'Ready for decolorization'
+        }
+      </p>
+    </div>
+  </div>
+
+  <button
+    onClick={() => applyStain('decolorizer')}
+    disabled={stainingProgress.decolorized}
+    className="mt-6 bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 disabled:bg-gray-400"
+  >
+    {stainingProgress.decolorized ? '✅ Decolorizer Applied' : 'Apply Decolorizer'}
+  </button>
+</div>
+
+{step === 7 && (
+  <div className="bg-white rounded-lg p-6">
+    <h3 className="text-2xl font-bold mb-6">Apply Safranin (Counterstain)</h3>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <div className="bg-pink-50 p-4 rounded-lg mb-4">
+          <h4 className="font-semibold text-pink-800 mb-2">🔬 Counterstain Purpose</h4>
+          <p className="text-pink-700 text-sm">
+            Safranin provides color to decolorized Gram-negative bacteria, 
+            making them visible as pink/red. Gram-positive bacteria remain purple 
+            because the darker crystal violet masks the lighter safranin.
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-12 h-16 bg-pink-400 rounded border-2 border-pink-600 flex items-end justify-center">
+            <Droplets className="w-6 h-6 text-white mb-1" />
+          </div>
+          <div>
+            <p className="font-semibold">Safranin Solution</p>
+            <p className="text-sm text-gray-600">Counterstain - colors decolorized bacteria pink</p>
+          </div>
+        </div>
+
+        <div className="bg-green-50 p-4 rounded">
+          <h5 className="font-semibold text-green-800 mb-2">Final Results:</h5>
+          <ul className="text-sm text-green-700 space-y-1">
+            <li>• <strong>Gram-positive:</strong> Purple/violet color</li>
+            <li>• <strong>Gram-negative:</strong> Pink/red color</li>
+            <li>• Clear differentiation between bacterial types</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-4 text-center">Microscopic View:</h4>
+        <div className="w-64 h-64 bg-black rounded-full mx-auto relative border-4 border-gray-600">
+          <svg className="absolute inset-4 w-56 h-56">
+            {renderBacterialCells()}
+          </svg>
+          <div className="absolute bottom-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+            1000x
+          </div>
+        </div>
+        <p className="text-center text-sm text-gray-600 mt-2">
+          {stainingProgress.safranin ? 
+            `Final result: ${bacteriaTypes[selectedBacteria].finalColor} ${bacteriaTypes[selectedBacteria].name}` : 
+            'Ready for counterstain'
+          }
+        </p>
+      </div>
+    </div>
+
+    <button
+      onClick={() => applyStain('safranin')}
+      disabled={stainingProgress.safranin}
+      className="mt-6 bg-pink-500 text-white px-6 py-2 rounded hover:bg-pink-600 disabled:bg-gray-400"
+    >
+      {stainingProgress.safranin ? '✅ Safranin Applied' : 'Apply Safranin'}
+    </button>
+  </div>
+)}
+
+{step === 9 && (
+  <div className="bg-white rounded-lg p-6">
+    <h3 className="text-2xl font-bold mb-6">Microscopic Examination and Results</h3>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <h4 className="font-semibold mb-4">Final Microscopic Analysis:</h4>
+        <div className="w-80 h-80 bg-black rounded-full mx-auto relative border-4 border-gray-600 mb-4">
+          <svg className="absolute inset-4 w-72 h-72">
+            {renderBacterialCells()}
+          </svg>
+          <div className="absolute bottom-4 right-4 text-white text-xs bg-black/50 px-2 py-1 rounded">
+            1000x Oil Immersion
+          </div>
+        </div>
+        
+        <div className="text-center">
+          <div className={`inline-block px-4 py-2 rounded-lg font-semibold ${
+            bacteriaTypes[selectedBacteria].finalColor === 'purple' 
+              ? 'bg-purple-100 text-purple-800 border border-purple-300' 
+              : 'bg-pink-100 text-pink-800 border border-pink-300'
+          }`}>
+            {bacteriaTypes[selectedBacteria].name}: {bacteriaTypes[selectedBacteria].type}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-4">Results Analysis:</h4>
+        <div className="space-y-4">
+          <div className={`p-4 rounded-lg border ${
+            bacteriaTypes[selectedBacteria].finalColor === 'purple' 
+              ? 'bg-purple-50 border-purple-200' 
+              : 'bg-pink-50 border-pink-200'
+          }`}>
+            <h5 className={`font-semibold mb-2 ${
+              bacteriaTypes[selectedBacteria].finalColor === 'purple' 
+                ? 'text-purple-800' 
+                : 'text-pink-800'
+            }`}>
+              {bacteriaTypes[selectedBacteria].name} Classification:
+            </h5>
+            <ul className={`text-sm space-y-1 ${
+              bacteriaTypes[selectedBacteria].finalColor === 'purple' 
+                ? 'text-purple-700' 
+                : 'text-pink-700'
+            }`}>
+              <li><strong>Result:</strong> {bacteriaTypes[selectedBacteria].type}</li>
+              <li><strong>Color:</strong> {bacteriaTypes[selectedBacteria].finalColor}</li>
+              <li><strong>Morphology:</strong> {bacteriaTypes[selectedBacteria].shape}</li>
+              <li><strong>Cell Wall:</strong> {
+                bacteriaTypes[selectedBacteria].type === 'Gram-positive' 
+                  ? 'Thick peptidoglycan layer (20-80nm)' 
+                  : 'Thin peptidoglycan + outer membrane'
+              }</li>
+            </ul>
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h5 className="font-semibold text-blue-800 mb-2">Clinical Significance:</h5>
+            <p className="text-sm text-blue-700">
+              {bacteriaTypes[selectedBacteria].type === 'Gram-positive' 
+                ? 'Gram-positive bacteria are generally more susceptible to penicillin, vancomycin, and β-lactam antibiotics due to their accessible peptidoglycan layer.'
+                : 'Gram-negative bacteria have an outer membrane barrier that can make them more resistant to certain antibiotics. They may require different treatment approaches.'
+              }
+            </p>
+          </div>
+
+          <div className="bg-green-50 p-4 rounded-lg">
+            <h5 className="font-semibold text-green-800 mb-2">Lab Performance Summary:</h5>
+            <div className="text-sm text-green-700 space-y-1">
+              <p><strong>Actions Completed:</strong> {userActions.length}</p>
+              <p><strong>Technical Errors:</strong> {mistakes.length}</p>
+              <p><strong>Staining Result:</strong> {bacteriaTypes[selectedBacteria].type} (Correct)</p>
+              <p><strong>Grade:</strong> {mistakes.length === 0 ? 'A+' : mistakes.length <= 2 ? 'A' : 'B+'}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => {
+              const grade = mistakes.length === 0 ? 100 : Math.max(75, 100 - mistakes.length * 5);
+              const updatedProfile = {
+                ...studentProfile,
+                experimentsCompleted: studentProfile.experimentsCompleted + 1,
+                totalScore: studentProfile.totalScore + grade,
+                labProgress: {
+                  ...studentProfile.labProgress,
+                  'gram-staining': 'completed'
+                },
+                badges: [...new Set([...studentProfile.badges, 'Bacterial Classification Expert'])]
+              };
+              saveUserData(updatedProfile);
+              setCurrentExperiment('dashboard');
+            }}
+            className="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600"
+          >
+            Complete Gram Staining Lab
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{mistakes.length > 0 && (
+  <div className="mt-6 bg-red-500/20 border border-red-500/50 rounded-lg p-4">
+    <h4 className="text-red-300 font-semibold mb-2">⚠️ Lab Notes ({mistakes.length} issues)</h4>
+    <ul className="text-red-200 text-sm space-y-1">
+      {mistakes.slice(-3).map((mistake, index) => (
+        <li key={index}>• {mistake}</li>
+      ))}
+    </ul>
+  </div>
+)}
 
 // Cell Staining Component (Cytoskeleton & Nucleus)
 const CellStaining = () => {
