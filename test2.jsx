@@ -1,3 +1,4 @@
+                 <div>
                   <div className="bg-red-50 p-4 rounded-lg mb-4">
                     <h4 className="font-semibold text-red-800 mb-2">⚠️ Critical Step!</h4>
                     <p className="text-red-700 text-sm">
@@ -5,7 +6,6 @@
                       no more purple dye runs off the slide. Over-decolorization causes false negatives.
                     </p>
                   </div>
-                <div>
                   <div className="bg-blue-50 p-4 rounded-lg mb-4">
                     <h4 className="font-semibold text-blue-800 mb-2">🔬 Decolorization Mechanism</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
