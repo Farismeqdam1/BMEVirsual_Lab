@@ -1,3 +1,4 @@
+import QuizModal from "./components/QuizModal";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Beaker,
@@ -106,77 +107,6 @@ const exportCSV = (profile) => {
   a.download = `VirtualLab_${(profile.name || "student").replace(/\s+/g, "_").toLowerCase()}.csv`;
   a.click();
   URL.revokeObjectURL(url);
-};
-
-/* =========================================
-   Quiz Modal (MCQ)
-   ========================================= */
-const QuizModal = ({ isOpen, onClose, questions = [], onSubmit, title }) => {
-  const [answers, setAnswers] = useState({});
-  useEffect(() => {
-    if (isOpen) setAnswers({});
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-  const allAnswered = questions.every((_, i) => answers[i] !== undefined);
-
-  const submit = () => {
-    let correct = 0;
-    questions.forEach((q, i) => {
-      if (q.correctIndex === answers[i]) correct += 1;
-    });
-    const pct = Math.round((correct / questions.length) * 100);
-    onSubmit(pct);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-2xl w-full max-w-2xl p-6 shadow-2xl">
-        <h3 className="text-2xl font-bold mb-4">{title || "Quiz"}</h3>
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-          {questions.map((q, idx) => (
-            <div key={idx} className="bg-gray-50 p-3 rounded border">
-              <div className="font-semibold mb-2">
-                {idx + 1}. {q.q}
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {q.options.map((opt, i) => (
-                  <label
-                    key={i}
-                    className={`flex items-center gap-2 p-2 rounded cursor-pointer border ${
-                      answers[idx] === i ? "bg-blue-100 border-blue-400" : "bg-white hover:bg-gray-100"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name={`q_${idx}`}
-                      checked={answers[idx] === i}
-                      onChange={() => setAnswers((a) => ({ ...a, [idx]: i }))}
-                    />
-                    <span className="text-sm">{opt}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-end gap-2 mt-5">
-          <button onClick={onClose} className="px-4 py-2 rounded border hover:bg-gray-50">
-            Cancel
-          </button>
-          <button
-            disabled={!allAnswered}
-            onClick={submit}
-            className={`px-4 py-2 rounded text-white ${
-              allAnswered ? "bg-green-600 hover:bg-green-700" : "bg-gray-400"
-            }`}
-          >
-            Submit Quiz
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 /* =========================================
