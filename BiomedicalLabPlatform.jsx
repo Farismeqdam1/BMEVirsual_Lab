@@ -1117,7 +1117,13 @@ const BiomedicalLabPlatform = () => {
               {/* Microscope View */}
               <div>
                 <div className="bg-black rounded-lg p-4 h-96 relative overflow-hidden border-4 border-gray-600">
-                  <div className="absolute inset-0 bg-gradient-radial from-gray-800 to-black opacity-50 rounded-full" />
+                  <div
+                    className="absolute inset-0 opacity-50 rounded-full"
+                    style={{
+                      backgroundImage: "radial-gradient(circle at center, rgba(107,114,128,0.6), rgba(0,0,0,0.6))"
+                    }}
+                  ></div>
+
                   {microscopeFilter !== "brightfield" && (
                     <div
                       className="absolute inset-0 mix-blend-multiply opacity-20"
