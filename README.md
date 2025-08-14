@@ -1,52 +1,52 @@
-🧪 Virtual Biomedical Lab Platform
+Here’s a **professional README** you can use for your Virtual Biomedical Lab React project:
 
-An interactive, gamified virtual lab built with React for Biomedical Engineering students to simulate core laboratory experiments, track progress, and earn badges — without requiring physical lab access.
+---
 
-📌 Features
-🔹 Dashboard
+# 🧪 Virtual Biomedical Lab Platform
 
-Displays student profile, badges earned, and total score.
+An **interactive, gamified virtual lab** built with **React** for Biomedical Engineering students to simulate core laboratory experiments, track progress, and earn badges — without requiring physical lab access.
 
-Tracks progress across all available experiments.
+## 📌 Features
 
-Interactive grid view of available experiments.
+### 🔹 **Dashboard**
 
-🔹 Available Experiments
+* Displays **student profile**, badges earned, and total score.
+* Tracks **progress** across all available experiments.
+* Interactive grid view of available experiments.
 
-Osmotic Solutions Lab
+### 🔹 **Available Experiments**
 
-Simulate isotonic, hypotonic, and hypertonic effects on onion cells & RBCs.
+1. **Osmotic Solutions Lab**
 
-Step-by-step guided protocol with microscope view.
+   * Simulate isotonic, hypotonic, and hypertonic effects on onion cells & RBCs.
+   * Step-by-step guided protocol with microscope view.
+   * Realistic cell morphology changes and solution identification quiz.
 
-Realistic cell morphology changes and solution identification quiz.
+2. **Bradford Protein Assay**
 
-Bradford Protein Assay
+   * Quantify protein concentration using BSA standards & Bradford reagent.
+   * Interactive pipetting, reagent addition, incubation, and microplate reading.
+   * Automatic **standard curve** generation & unknown concentration calculation.
 
-Quantify protein concentration using BSA standards & Bradford reagent.
+3. **PCR Amplification Simulation**
 
-Interactive pipetting, reagent addition, incubation, and microplate reading.
+   * Design primers with GC-content checks.
+   * Prepare PCR master mix with precise reagent volumes.
+   * Simulate thermal cycling & gel electrophoresis.
+   * Analyze amplified DNA fragments.
 
-Automatic standard curve generation & unknown concentration calculation.
+4. **Gram Staining Protocol** *(Planned)*
 
-PCR Amplification Simulation
+   * Differentiation of Gram-positive & Gram-negative bacteria.
+   * Interactive staining sequence and microscope visualization.
 
-Design primers with GC-content checks.
+5. **Cytoskeleton & Nucleus Staining** *(Planned)*
 
-Prepare PCR master mix with precise reagent volumes.
+   * Actin filament & nuclear staining using phalloidin & DAPI.
+   * Fluorescence microscopy simulation.
 
-Simulate thermal cycling & gel electrophoresis.
+### 🔹 **Gamification**
 
-Analyze amplified DNA fragments.
-
-Gram Staining Protocol (Planned)
-
-Differentiation of Gram-positive & Gram-negative bacteria.
-
-Interactive staining sequence and microscope visualization.
-
-Cytoskeleton & Nucleus Staining (Planned)
-
-Actin filament & nuclear staining using phalloidin & DAPI.
-
-Fluorescence microscopy simulation.
+* Earn **badges** for each completed experiment.
+* Grade calculation based on **accuracy & mistakes**.
+* Real-time progress tracking and scoring.
