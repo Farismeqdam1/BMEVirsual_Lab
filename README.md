@@ -1,6 +1,4 @@
-Here’s a **professional README** you can use for your Virtual Biomedical Lab React project:
 
----
 
 # 🧪 Virtual Biomedical Lab Platform
 
